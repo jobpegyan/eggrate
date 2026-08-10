@@ -3,6 +3,7 @@
  * Everything is derived from the database — no fixtures, no hardcoded rates.
  */
 import { supabase } from "@/integrations/supabase/client";
+import { toISODate } from "@/utils/format";
 import type {
   AdSlot,
   Article,
@@ -124,7 +125,14 @@ export async function getHomepageData(): Promise<HomepageData> {
     .range(1, 1)
     .maybeSingle();
 
-  const dates = history.map((h) => h.date).reverse();
+  const latestCityDate = (latestCities as any[])
+    .map((c) => c.effective_date)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+
+  const effectiveDate = latestCityDate || history.at(-1)?.date || toISODate();
+
   const cities = latestCities.sort((a, b) => {
     if (a.featured !== b.featured) return a.featured ? -1 : 1;
     return b.perEgg - a.perEgg;
@@ -170,7 +178,7 @@ export async function getHomepageData(): Promise<HomepageData> {
     previousPerEgg,
     change: round(perEgg - previousPerEgg),
     changePercent: pct(perEgg, previousPerEgg),
-    effectiveDate: dates.at(-1) ?? new Date().toISOString().slice(0, 10),
+    effectiveDate,
     lastUpdated: (latestCities as any[])
       .map((c) => c.updated_at)
       .sort()
