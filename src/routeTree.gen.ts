@@ -30,6 +30,7 @@ import { Route as StatesRouteImport } from './routes/states'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TrendsRouteImport } from './routes/trends'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as ApiCronRouteImport } from './routes/api.cron'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
@@ -162,6 +163,11 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiCronRoute = ApiCronRouteImport.update({
+  id: '/api/cron',
+  path: '/api/cron',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/api/cron': typeof ApiCronRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -387,6 +394,7 @@ export interface FileRoutesByTo {
   '/states': typeof StatesRoute
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
+  '/api/cron': typeof ApiCronRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -439,6 +447,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/api/cron': typeof ApiCronRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -491,6 +500,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trends'
     | '/admin'
+    | '/api/cron'
     | '/blog/$slug'
     | '/city/$slug'
     | '/compare/$slug'
@@ -540,6 +550,7 @@ export interface FileRouteTypes {
     | '/states'
     | '/terms'
     | '/trends'
+    | '/api/cron'
     | '/blog/$slug'
     | '/city/$slug'
     | '/compare/$slug'
@@ -591,6 +602,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trends'
     | '/_authenticated/admin'
+    | '/api/cron'
     | '/blog/$slug'
     | '/city/$slug'
     | '/compare/$slug'
@@ -642,6 +654,7 @@ export interface RootRouteChildren {
   StatesRoute: typeof StatesRoute
   TermsRoute: typeof TermsRoute
   TrendsRoute: typeof TrendsRoute
+  ApiCronRoute: typeof ApiCronRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
   CompareSlugRoute: typeof CompareSlugRoute
@@ -798,6 +811,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/cron': {
+      id: '/api/cron'
+      path: '/api/cron'
+      fullPath: '/api/cron'
+      preLoaderRoute: typeof ApiCronRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/blog/': {
       id: '/blog/'
@@ -1106,6 +1126,7 @@ const rootRouteChildren: RootRouteChildren = {
   StatesRoute: StatesRoute,
   TermsRoute: TermsRoute,
   TrendsRoute: TrendsRoute,
+  ApiCronRoute: ApiCronRoute,
   BlogSlugRoute: BlogSlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,
   CompareSlugRoute: CompareSlugRoute,

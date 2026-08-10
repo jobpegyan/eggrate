@@ -18,10 +18,9 @@ async function handleCron(request: Request) {
   const url = new URL(request.url);
   const keyParam = url.searchParams.get("key");
   const authHeader = request.headers.get("authorization");
-  
-  const expectedSecret = process.env['CRON_SECRET'] || process.env['AUTOMATION_API_KEY'];
 
-  // Optional Secret Key check if environment secret is configured
+  const expectedSecret = process.env["CRON_SECRET"] || process.env["AUTOMATION_API_KEY"];
+
   if (expectedSecret && keyParam !== expectedSecret && authHeader !== `Bearer ${expectedSecret}`) {
     return new Response(
       JSON.stringify({ success: false, error: "Unauthorized: Invalid key" }),
@@ -33,7 +32,6 @@ async function handleCron(request: Request) {
   }
 
   try {
-    // 1. Fetch active data sources
     const { data: sources } = await supabase
       .from("data_sources")
       .select("id, name")
@@ -41,7 +39,6 @@ async function handleCron(request: Request) {
 
     const jobId = `cron-${Date.now()}`;
 
-    // 2. Log cron execution in audit log
     await supabase.from("automation_audit_logs").insert({
       job_id: jobId,
       action: "cron_trigger",
