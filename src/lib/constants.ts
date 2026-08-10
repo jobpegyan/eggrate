@@ -8,7 +8,7 @@ export const SITE = {
     "Daily NECC egg rates for every state and city in India. Live mandi prices, historical trends and wholesale/retail comparisons, updated every morning.",
   locale: "en-IN",
   /** Relative URLs are used until a production domain is attached. */
-  baseUrl: "https://eggratetoday.com",
+  baseUrl: "https://www.egg-rate.today",
   twitter: "@eggratetoday",
 } as const;
 

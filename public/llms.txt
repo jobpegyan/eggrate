@@ -3,12 +3,12 @@
 > Daily verified NECC wholesale & retail egg prices for every major state and city across India, updated every morning.
 
 ## Core Pages & Features
-- [Today's National Egg Rate](https://eggratetoday.com/): Live national average egg prices (per piece, dozen, 30-egg tray, 210-egg peti).
-- [State-wise Egg Rates](https://eggratetoday.com/states): Comprehensive daily egg prices across all states in India.
-- [City-wise Egg Rates](https://eggratetoday.com/cities): City-level egg rate listings for Delhi, Mumbai, Hyderabad, Namakkal, Bengaluru, Kolkata, Pune, and more.
-- [Egg Rate History & Trends](https://eggratetoday.com/trends): Interactive price charts, historical data, and rate fluctuations over time.
-- [AI Market Analysis](https://eggratetoday.com/egg-market-analysis): AI-driven daily egg market summary, price forecasts, and market insights.
-- [Compare City Rates](https://eggratetoday.com/compare/mumbai-vs-pune): Side-by-side comparison of wholesale & retail rates between any two cities.
+- [Today's National Egg Rate](https://www.egg-rate.today/): Live national average egg prices (per piece, dozen, 30-egg tray, 210-egg peti).
+- [State-wise Egg Rates](https://www.egg-rate.today/states): Comprehensive daily egg prices across all states in India.
+- [City-wise Egg Rates](https://www.egg-rate.today/cities): City-level egg rate listings for Delhi, Mumbai, Hyderabad, Namakkal, Bengaluru, Kolkata, Pune, and more.
+- [Egg Rate History & Trends](https://www.egg-rate.today/trends): Interactive price charts, historical data, and rate fluctuations over time.
+- [AI Market Analysis](https://www.egg-rate.today/egg-market-analysis): AI-driven daily egg market summary, price forecasts, and market insights.
+- [Compare City Rates](https://www.egg-rate.today/compare/mumbai-vs-pune): Side-by-side comparison of wholesale & retail rates between any two cities.
 
 ## Data Structure & Units
 - **Per Piece**: Base price per single egg.

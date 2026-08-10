@@ -4,7 +4,7 @@ Disallow: /admin
 Disallow: /_authenticated/
 
 # Sitemap
-Sitemap: https://eggratetoday.com/sitemap.xml
+Sitemap: https://www.egg-rate.today/sitemap.xml
 
 # LLM Context
-# LLMs-Txt: https://eggratetoday.com/llms.txt
+# LLMs-Txt: https://www.egg-rate.today/llms.txt

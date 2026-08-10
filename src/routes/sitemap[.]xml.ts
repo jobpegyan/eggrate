@@ -6,7 +6,7 @@ export const Route = createFileRoute('/sitemap.xml')({
   server: {
     handlers: {
       GET: async () => {
-        const baseUrl = SITE.baseUrl || 'https://eggratetoday.com';
+        const baseUrl = SITE.baseUrl || 'https://www.egg-rate.today';
         
         const [states, cities, posts, pages] = await Promise.all([
           supabase.from('states').select('slug, updated_at').eq('status', 'active'),
