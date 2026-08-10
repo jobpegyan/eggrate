@@ -10,12 +10,10 @@ import {
   Edit2,
   Eye,
   CheckCircle2,
-  XCircle,
   Code2,
   Loader2,
-  Sparkles,
   Layout,
-  AlertCircle
+  Search,
 } from "lucide-react";
 
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
@@ -62,6 +60,7 @@ function AdManagementPage() {
   const [editingSlot, setEditingSlot] = React.useState<AdSlotRow | null>(null);
   const [previewSlot, setPreviewSlot] = React.useState<AdSlotRow | null>(null);
   const [deletingSlot, setDeletingSlot] = React.useState<AdSlotRow | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   // Fetch ad slots from Supabase
   const query = useQuery({
@@ -77,6 +76,17 @@ function AdManagementPage() {
   });
 
   const slots = query.data ?? [];
+  const filteredSlots = React.useMemo(() => {
+    if (!searchTerm.trim()) return slots;
+    const term = searchTerm.toLowerCase();
+    return slots.filter(
+      (s) =>
+        s.name.toLowerCase().includes(term) ||
+        s.position.toLowerCase().includes(term) ||
+        (s.description ?? "").toLowerCase().includes(term)
+    );
+  }, [slots, searchTerm]);
+
   const activeCount = slots.filter((s) => s.is_enabled).length;
   const configuredCount = slots.filter((s) => Boolean(s.code && s.code.trim().length > 0)).length;
 
@@ -193,7 +203,7 @@ function AdManagementPage() {
 
   const columns: Column<AdSlotRow>[] = [
     {
-      id: "position",
+      key: "position",
       header: "Position Key",
       cell: (row) => (
         <div className="space-y-1">
@@ -204,7 +214,7 @@ function AdManagementPage() {
       ),
     },
     {
-      id: "name",
+      key: "name",
       header: "Placement Name",
       cell: (row) => (
         <div className="space-y-0.5">
@@ -216,7 +226,7 @@ function AdManagementPage() {
       ),
     },
     {
-      id: "code",
+      key: "code",
       header: "Ad Code Snippet",
       cell: (row) => {
         const hasCode = Boolean(row.code && row.code.trim().length > 0);
@@ -245,7 +255,7 @@ function AdManagementPage() {
       },
     },
     {
-      id: "is_enabled",
+      key: "is_enabled",
       header: "Status",
       cell: (row) => (
         <div className="flex items-center gap-2">
@@ -262,8 +272,9 @@ function AdManagementPage() {
       ),
     },
     {
-      id: "actions",
-      header: "",
+      key: "actions",
+      header: "Actions",
+      align: "right",
       cell: (row) => (
         <div className="flex items-center justify-end gap-1">
           <Button
@@ -343,16 +354,37 @@ function AdManagementPage() {
         </Card>
       </div>
 
+      {/* Search & Filter Bar */}
+      <div className="flex items-center gap-2 max-w-sm">
+        <div className="relative w-full">
+          <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search ad slots by name or key..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 text-sm"
+          />
+        </div>
+      </div>
+
       {/* Main Data Table */}
       {query.isLoading ? (
         <TableSkeleton rows={6} columns={5} />
+      ) : query.isError ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm">
+          <p className="font-semibold text-destructive">Failed to load ad slots</p>
+          <p className="text-xs text-muted-foreground mt-1">{query.error?.message}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={() => query.refetch()}>
+            Retry Loading
+          </Button>
+        </div>
       ) : (
         <DataTable
           columns={columns}
-          data={slots}
-          filterColumn="name"
-          filterPlaceholder="Filter ad slots by name..."
-          emptyMessage="No ad slots found. Click 'New Ad Slot' to create one."
+          rows={filteredSlots}
+          rowKey={(row) => row.id}
+          emptyMessage="No ad slots found."
         />
       )}
 
