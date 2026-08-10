@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Map,
   MapPin,
+  Megaphone,
   Search,
   Settings,
   ShieldCheck,
@@ -53,6 +54,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     items: [
       { label: "Announcements", to: "/admin/announcements", icon: Bell },
       { label: "Pages", to: "/admin/pages", icon: FileCode2 },
+      { label: "Ad Management", to: "/admin/ads", icon: Megaphone },
     ],
   },
   {

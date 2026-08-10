@@ -97,3 +97,12 @@ export const roleSchema = z.object({
   level: z.coerce.number().int().min(0).max(100),
 });
 export type RoleValues = z.infer<typeof roleSchema>;
+
+export const adSlotSchema = z.object({
+  position: z.string().trim().min(2, "Position key is required").max(60),
+  name: z.string().trim().min(2, "Name is required").max(100),
+  description: z.string().trim().max(400).optional().or(z.literal("")),
+  isEnabled: z.boolean(),
+  code: z.string().trim().optional().or(z.literal("")),
+});
+export type AdSlotValues = z.infer<typeof adSlotSchema>;

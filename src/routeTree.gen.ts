@@ -39,6 +39,7 @@ import { Route as EggRateDateRouteImport } from './routes/egg-rate.$date'
 import { Route as StateSlugRouteImport } from './routes/state.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminActivityLogsRouteImport } from './routes/_authenticated/admin/activity-logs'
+import { Route as AuthenticatedAdminAdsRouteImport } from './routes/_authenticated/admin/ads'
 import { Route as AuthenticatedAdminAiRouteImport } from './routes/_authenticated/admin/ai'
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin/announcements'
 import { Route as AuthenticatedAdminCitiesRouteImport } from './routes/_authenticated/admin/cities'
@@ -210,6 +211,11 @@ const AuthenticatedAdminActivityLogsRoute =
     path: '/activity-logs',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminAdsRoute = AuthenticatedAdminAdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminAiRoute = AuthenticatedAdminAiRouteImport.update({
   id: '/ai',
   path: '/ai',
@@ -352,6 +358,7 @@ export interface FileRoutesByFullPath {
   '/state/$slug': typeof StateSlugRouteWithChildren
   '/blog/': typeof BlogIndexRoute
   '/admin/activity-logs': typeof AuthenticatedAdminActivityLogsRoute
+  '/admin/ads': typeof AuthenticatedAdminAdsRoute
   '/admin/ai': typeof AuthenticatedAdminAiRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/cities': typeof AuthenticatedAdminCitiesRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/state/$slug': typeof StateSlugRouteWithChildren
   '/blog': typeof BlogIndexRoute
   '/admin/activity-logs': typeof AuthenticatedAdminActivityLogsRoute
+  '/admin/ads': typeof AuthenticatedAdminAdsRoute
   '/admin/ai': typeof AuthenticatedAdminAiRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/cities': typeof AuthenticatedAdminCitiesRoute
@@ -455,6 +463,7 @@ export interface FileRoutesById {
   '/state/$slug': typeof StateSlugRouteWithChildren
   '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/activity-logs': typeof AuthenticatedAdminActivityLogsRoute
+  '/_authenticated/admin/ads': typeof AuthenticatedAdminAdsRoute
   '/_authenticated/admin/ai': typeof AuthenticatedAdminAiRoute
   '/_authenticated/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/_authenticated/admin/cities': typeof AuthenticatedAdminCitiesRoute
@@ -508,6 +517,7 @@ export interface FileRouteTypes {
     | '/state/$slug'
     | '/blog/'
     | '/admin/activity-logs'
+    | '/admin/ads'
     | '/admin/ai'
     | '/admin/announcements'
     | '/admin/cities'
@@ -558,6 +568,7 @@ export interface FileRouteTypes {
     | '/state/$slug'
     | '/blog'
     | '/admin/activity-logs'
+    | '/admin/ads'
     | '/admin/ai'
     | '/admin/announcements'
     | '/admin/cities'
@@ -610,6 +621,7 @@ export interface FileRouteTypes {
     | '/state/$slug'
     | '/blog/'
     | '/_authenticated/admin/activity-logs'
+    | '/_authenticated/admin/ads'
     | '/_authenticated/admin/ai'
     | '/_authenticated/admin/announcements'
     | '/_authenticated/admin/cities'
@@ -875,6 +887,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminActivityLogsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/ads': {
+      id: '/_authenticated/admin/ads'
+      path: '/ads'
+      fullPath: '/admin/ads'
+      preLoaderRoute: typeof AuthenticatedAdminAdsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/ai': {
       id: '/_authenticated/admin/ai'
       path: '/ai'
@@ -1020,6 +1039,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminActivityLogsRoute: typeof AuthenticatedAdminActivityLogsRoute
+  AuthenticatedAdminAdsRoute: typeof AuthenticatedAdminAdsRoute
   AuthenticatedAdminAiRoute: typeof AuthenticatedAdminAiRoute
   AuthenticatedAdminAnnouncementsRoute: typeof AuthenticatedAdminAnnouncementsRoute
   AuthenticatedAdminCitiesRoute: typeof AuthenticatedAdminCitiesRoute
@@ -1044,6 +1064,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminActivityLogsRoute: AuthenticatedAdminActivityLogsRoute,
+    AuthenticatedAdminAdsRoute: AuthenticatedAdminAdsRoute,
     AuthenticatedAdminAiRoute: AuthenticatedAdminAiRoute,
     AuthenticatedAdminAnnouncementsRoute: AuthenticatedAdminAnnouncementsRoute,
     AuthenticatedAdminCitiesRoute: AuthenticatedAdminCitiesRoute,
