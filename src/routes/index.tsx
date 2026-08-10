@@ -13,6 +13,7 @@ import { TopCities } from "@/components/home/top-cities";
 import { TopStates } from "@/components/home/top-states";
 import { TrendingSection } from "@/components/home/trending-section";
 import { WhyChooseUs } from "@/components/home/why-choose-us";
+import { Container } from "@/components/common/section";
 import { PageSkeleton } from "@/components/common/skeletons";
 import { SITE } from "@/lib/constants";
 import { homepageQuery } from "@/services/public-queries";
@@ -99,9 +100,9 @@ function HomePage() {
 
       <AdSlot position="below_hero" className="py-6" minHeight={250} />
 
-      <div className="container py-4">
+      <Container className="py-6 sm:py-8">
         <AIMarketSummary />
-      </div>
+      </Container>
 
       <TopStates states={data.states} />
       <TopCities cities={data.cities} />

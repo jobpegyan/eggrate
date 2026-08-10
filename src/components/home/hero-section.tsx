@@ -27,19 +27,30 @@ export function HeroSection({
   }));
 
   return (
-    <Section className="border-b border-border/70 bg-gradient-to-b from-accent/45 via-background to-background pt-6 pb-10 sm:py-14">
+    <Section className="border-b border-border/70 bg-gradient-to-b from-accent/45 via-background to-background pt-6 pb-12 sm:pt-10 sm:pb-16">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div className="min-w-0">
-            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-xs">
-              <Radio className="size-3 animate-pulse text-success" aria-hidden />
-              <span>Live · updated today</span>
-              {summary ? (
-                <span className="ml-1 hidden opacity-80 xs:inline">
-                  · {formatDateLong(summary.effectiveDate)}
-                </span>
-              ) : null}
-            </p>
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground sm:px-3 sm:text-xs">
+                <Radio className="size-3 animate-pulse text-success" aria-hidden />
+                <span>Live · updated today</span>
+                {summary ? (
+                  <span className="ml-1 hidden opacity-80 xs:inline">
+                    · {formatDateLong(summary.effectiveDate)}
+                  </span>
+                ) : null}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground sm:text-xs">
+                {TRUST_BADGES.map((badge) => (
+                  <span key={badge.label} className="inline-flex items-center gap-1.5 font-medium">
+                    <badge.icon className="size-3.5 text-primary sm:size-4" aria-hidden />
+                    {badge.label}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <h1 className="mt-5 font-display text-3xl font-semibold leading-tight tracking-tight text-foreground xs:text-4xl sm:text-5xl md:leading-[1.08]">
               Today's egg rate in India
@@ -102,15 +113,6 @@ export function HeroSection({
                 <span>Compare</span>
               </Link>
             </div>
-
-            <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-muted-foreground sm:text-xs">
-              {TRUST_BADGES.map((badge) => (
-                <li key={badge.label} className="inline-flex items-center gap-1.5">
-                  <badge.icon className="size-3.5 text-primary sm:size-4" aria-hidden />
-                  {badge.label}
-                </li>
-              ))}
-            </ul>
           </div>
 
           {summary ? <LiveRateCard summary={summary} /> : null}
