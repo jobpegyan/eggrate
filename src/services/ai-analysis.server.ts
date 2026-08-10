@@ -84,7 +84,7 @@ export async function generateMarketInsight(
 
   const prompt = `
 You are an expert Indian Egg Market Analyst for the "EggRateToday" platform.
-Analyze the following market data and provide a detailed report in Markdown format.
+Analyze the following market data and provide a detailed report in clean Markdown format with All-India coverage.
 
 MARKET CONTEXT:
 Scope: ${scope} ${slug ? `(${slug})` : ''}
@@ -95,22 +95,26 @@ Market Movers: ${JSON.stringify(context.movers)}
 Data Coverage: ${JSON.stringify(context.coverage)}
 Generated At: ${context.timestamp}
 
-REQUIREMENTS:
- 1. Provide a professional Title.
- 2. Structure the content using Markdown (headers, lists, bold text).
- 3. Use Markdown Tables for data comparisons (e.g., current vs previous rates).
- 4. Be factual. Mention specific price changes and percentages from the data.
- 5. Identify regional trends (e.g., "South India showing volatility").
- 6. Provide a confidence score (low, medium, or high) based on data coverage.
- 7. Conclude with a "Weekly Outlook".
-7. Focus on transparency.
+REQUIREMENTS FOR STRUCTURED OUTPUT:
+1. Title: Provide a clear, analytical title.
+2. Executive Overview: A short summary of today's price movements across India.
+3. All-India Price Summary Table: A clean Markdown table with headers:
+   | Region / Mandi | Current Rate (₹/pc) | 7-Day Change | Trend Status |
+4. Major Market Movers: Top gainers and decliners with exact numbers.
+5. Regional Market Highlights: Break down major zones (North, South, East, West, Central).
+6. 7-Day Weekly Outlook: Future expectation based strictly on factual movement data.
+
+FORMAT INSTRUCTIONS:
+- Use standard Markdown headers (##, ###).
+- Use GFM markdown tables with proper column separators (| header | header |).
+- Be factual and objective. Do not invent unverified rates.
 
 RESPONSE FORMAT (JSON):
 {
   "title": "Report Title",
-  "content": "Markdown content here...",
+  "content": "Full markdown content with sections and structured tables...",
   "confidence": "high" | "medium" | "low",
-  "confidenceReason": "Why this confidence score?"
+  "confidenceReason": "Reasoning for the confidence level based on data completeness"
 }
 `;
 

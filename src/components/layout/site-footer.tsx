@@ -77,11 +77,7 @@ export function SiteFooter() {
             © {new Date().getFullYear()} {SITE.name}. Rates are indicative and sourced from
             published market data.
           </p>
-          <p>
-            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-            
-            AI Market Analysis ka jo output hai wo well structured hona chahiye aur table sahi se dikhna chahiye · All India coverage
-          </p>
+          <p>All India coverage</p>
         </div>
       </div>
     </footer>
