@@ -6,7 +6,6 @@ export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
       GET: async () => {
-        // Fetch robots.txt content from settings
         const { data } = await supabase
           .from("seo_settings")
           .select("value")
@@ -18,13 +17,15 @@ export const Route = createFileRoute("/robots.txt")({
         if (!content) {
           content = `User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /_authenticated/
 
 Sitemap: ${SITE.baseUrl}/sitemap.xml`;
         }
 
         return new Response(content, {
           headers: {
-            "Content-Type": "text/plain",
+            "Content-Type": "text/plain; charset=utf-8",
             "Cache-Control": "public, max-age=3600",
           },
         });

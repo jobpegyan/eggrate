@@ -19,6 +19,7 @@ import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as EggMarketAnalysisRouteImport } from './routes/egg-market-analysis'
 import { Route as EggRateHistoryRouteImport } from './routes/egg-rate-history'
 import { Route as EggRateTodayRouteImport } from './routes/egg-rate-today'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -105,6 +106,11 @@ const EggRateHistoryRoute = EggRateHistoryRouteImport.update({
 const EggRateTodayRoute = EggRateTodayRouteImport.update({
   id: '/egg-rate-today',
   path: '/egg-rate-today',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfflineRoute = OfflineRouteImport.update({
@@ -321,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/egg-market-analysis': typeof EggMarketAnalysisRoute
   '/egg-rate-history': typeof EggRateHistoryRoute
   '/egg-rate-today': typeof EggRateTodayRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/offline': typeof OfflineRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -370,6 +377,7 @@ export interface FileRoutesByTo {
   '/egg-market-analysis': typeof EggMarketAnalysisRoute
   '/egg-rate-history': typeof EggRateHistoryRoute
   '/egg-rate-today': typeof EggRateTodayRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/offline': typeof OfflineRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -420,6 +428,7 @@ export interface FileRoutesById {
   '/egg-market-analysis': typeof EggMarketAnalysisRoute
   '/egg-rate-history': typeof EggRateHistoryRoute
   '/egg-rate-today': typeof EggRateTodayRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/offline': typeof OfflineRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -471,6 +480,7 @@ export interface FileRouteTypes {
     | '/egg-market-analysis'
     | '/egg-rate-history'
     | '/egg-rate-today'
+    | '/llms.txt'
     | '/offline'
     | '/privacy'
     | '/reset-password'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/egg-market-analysis'
     | '/egg-rate-history'
     | '/egg-rate-today'
+    | '/llms.txt'
     | '/offline'
     | '/privacy'
     | '/reset-password'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/egg-market-analysis'
     | '/egg-rate-history'
     | '/egg-rate-today'
+    | '/llms.txt'
     | '/offline'
     | '/privacy'
     | '/reset-password'
@@ -620,6 +632,7 @@ export interface RootRouteChildren {
   EggMarketAnalysisRoute: typeof EggMarketAnalysisRoute
   EggRateHistoryRoute: typeof EggRateHistoryRoute
   EggRateTodayRoute: typeof EggRateTodayRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   OfflineRoute: typeof OfflineRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -707,6 +720,13 @@ declare module '@tanstack/react-router' {
       path: '/egg-rate-today'
       fullPath: '/egg-rate-today'
       preLoaderRoute: typeof EggRateTodayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offline': {
@@ -1076,6 +1096,7 @@ const rootRouteChildren: RootRouteChildren = {
   EggMarketAnalysisRoute: EggMarketAnalysisRoute,
   EggRateHistoryRoute: EggRateHistoryRoute,
   EggRateTodayRoute: EggRateTodayRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   OfflineRoute: OfflineRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,

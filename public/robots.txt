@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /_authenticated/
+
+# Sitemap
+Sitemap: https://eggratetoday.com/sitemap.xml
+
+# LLM Context
+# LLMs-Txt: https://eggratetoday.com/llms.txt
