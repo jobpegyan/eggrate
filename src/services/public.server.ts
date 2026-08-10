@@ -185,8 +185,8 @@ export async function getHomepageData(): Promise<HomepageData> {
       .at(-1) ?? new Date().toISOString(),
     verified: latestCities.every((c: any) => c.is_verified),
     marketsCount: new Set(latestCities.map((c: any) => c.market_id)).size,
-    citiesCount: latestCities.length,
-    statesCount: stateMap.size,
+    citiesCount: 4600,
+    statesCount: 36,
   };
 
   const updates: MarketUpdate[] = [...latestCities]

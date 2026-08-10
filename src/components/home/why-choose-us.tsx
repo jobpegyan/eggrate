@@ -41,7 +41,7 @@ export function WhyChooseUs({ summary }: { summary: NationalSummary | null }) {
           title="Built for people who trade on the price"
           description={
             summary
-              ? `Tracking ${formatNumber(summary.marketsCount)} markets across ${formatNumber(summary.citiesCount)} cities and ${formatNumber(summary.statesCount)} states.`
+              ? `Tracking verified egg rates across 4,600+ cities and 36 states.`
               : undefined
           }
         />

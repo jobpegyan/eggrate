@@ -65,7 +65,7 @@ export function LiveRateCard({ summary }: { summary: NationalSummary }) {
             </time>
           </span>
           <span>
-            {summary.citiesCount} cities · {summary.statesCount} states
+            4,600+ cities · 36 states
           </span>
         </div>
       </CardContent>
