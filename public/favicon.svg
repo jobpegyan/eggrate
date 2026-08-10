@@ -12,20 +12,34 @@
       <stop offset="0%" stop-color="#10b981" />
       <stop offset="100%" stop-color="#059669" />
     </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
   </defs>
+  
+  <!-- Rounded Container Background -->
   <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  
+  <!-- Subtle Background Pattern / Glow -->
   <circle cx="256" cy="256" r="180" fill="#ffffff" fill-opacity="0.1" />
+
+  <!-- Egg Shape -->
   <path 
     d="M256 96 C180 96, 140 180, 140 288 C140 376, 192 416, 256 416 C320 416, 372 376, 372 288 C372 180, 332 96, 256 96 Z" 
     fill="url(#eggGrad)" 
+    filter="url(#shadow)"
   />
+
+  <!-- Glossy Egg Highlight -->
   <path 
     d="M230 135 C200 150, 175 200, 170 260 C165 240, 175 170, 230 135 Z" 
     fill="#ffffff" 
     fill-opacity="0.6" 
   />
+
+  <!-- Trending Up Arrow Badge -->
   <g transform="translate(300, 270)">
-    <circle cx="50" cy="50" r="48" fill="url(#arrowGrad)" />
+    <circle cx="50" cy="50" r="48" fill="url(#arrowGrad)" filter="url(#shadow)" />
     <path d="M30 62 L44 48 L54 58 L70 38" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M56 38 L70 38 L70 52" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
