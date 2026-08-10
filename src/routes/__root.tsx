@@ -86,8 +86,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   beforeLoad: async ({ location }) => {
-    // Basic redirect check for every route change
-    // Using a server function to hit the database redirect table
+    // Skip DB redirect lookup on homepage and internal routes to save ~900ms TTFB latency
+    if (location.pathname === "/" || location.pathname.startsWith("/_")) {
+      return;
+    }
     try {
       const match = await fetchRedirect({ data: { path: location.pathname } });
       if (match) {
@@ -97,9 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         });
       }
     } catch (e) {
-      // If it's a redirect, re-throw it
       if ((e as any).status === 301 || (e as any).status === 302) throw e;
-      // Log other errors but don't block the site
       console.error("Redirect check failed:", e);
     }
   },
@@ -130,8 +130,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
+        rel: "preload",
+        as: "style",
+        href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap",
+      },
+      {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap",
+        media: "print",
+        onLoad: "this.media='all'",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],

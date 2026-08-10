@@ -8,11 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ChartPoint } from "@/types/home";
 
-/** Recharts is heavy — load it only once the section renders on the client. */
+/** Recharts is heavy — load it only after hydration on the client. */
 const RateChart = React.lazy(() => import("@/components/home/rate-chart"));
 
 export function ChartPreview({ points }: { points: ChartPoint[] }) {
   const [range, setRange] = React.useState<"7" | "30">("7");
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (points.length === 0) return null;
 
   const visible = range === "7" ? points.slice(-7) : points;
@@ -45,9 +51,13 @@ export function ChartPreview({ points }: { points: ChartPoint[] }) {
               </Tabs>
             }
           >
-            <React.Suspense fallback={<ChartSkeleton className="h-full" />}>
-              <RateChart points={visible} />
-            </React.Suspense>
+            {mounted ? (
+              <React.Suspense fallback={<ChartSkeleton className="h-full" />}>
+                <RateChart points={visible} />
+              </React.Suspense>
+            ) : (
+              <ChartSkeleton className="h-full" />
+            )}
           </ChartWrapper>
         </div>
       </Container>
