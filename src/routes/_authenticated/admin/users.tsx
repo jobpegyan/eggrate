@@ -39,7 +39,7 @@ import {
   type CreateUserValues,
   type UpdateUserValues,
 } from "@/lib/validation";
-import { createUser, deleteUser, listUsers, updateUser } from "@/services/admin.functions";
+import { createUser, deleteUser, listUsers, updateUser, setUserPassword } from "@/services/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   component: UsersPage,
@@ -393,6 +393,8 @@ function EditUserDialog({
   roles: RoleOption[];
 }) {
   const queryClient = useQueryClient();
+  const [newPassword, setNewPassword] = React.useState("");
+
   const form = useForm<UpdateUserValues>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
@@ -408,6 +410,7 @@ function EditUserDialog({
 
   React.useEffect(() => {
     if (!user) return;
+    setNewPassword("");
     form.reset({
       userId: user.id,
       fullName: user.full_name ?? "",
@@ -422,7 +425,14 @@ function EditUserDialog({
   const onSubmit = form.handleSubmit(async (values) => {
     try {
       await updateUser({ data: values });
-      toast.success("User updated");
+      if (newPassword.trim()) {
+        if (newPassword.length < 8) {
+          toast.error("Password must be at least 8 characters");
+          return;
+        }
+        await setUserPassword({ data: { userId: values.userId, password: newPassword.trim() } });
+      }
+      toast.success("User updated successfully");
       onClose();
       await queryClient.invalidateQueries({ queryKey: ["admin"] });
     } catch (error) {
@@ -434,8 +444,8 @@ function EditUserDialog({
     <Dialog open={Boolean(user)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit user</DialogTitle>
-          <DialogDescription>Update profile details, status and role.</DialogDescription>
+          <DialogTitle>Edit user & reset password</DialogTitle>
+          <DialogDescription>Update profile details, status, role, or reset password.</DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4" noValidate>
           <div className="space-y-2">
@@ -443,6 +453,18 @@ function EditUserDialog({
             <Input id="edit-name" {...form.register("fullName")} />
             <FieldError message={form.formState.errors.fullName?.message} />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-password">New Password (Leave blank to keep existing)</Label>
+            <Input
+              id="edit-password"
+              type="password"
+              placeholder="Enter new password (min 8 chars)"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="edit-phone">Phone</Label>

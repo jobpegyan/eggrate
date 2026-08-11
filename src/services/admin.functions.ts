@@ -14,7 +14,7 @@ const listUsersSchema = z.object({
 
 export const listUsers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => listUsersSchema.parse(input))
+  .validator((input: unknown) => listUsersSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { assertStaff, sanitizeSearch } = await import("./admin.server");
     await assertStaff(context.supabase, context.userId);
@@ -50,7 +50,7 @@ export const listUsers = createServerFn({ method: "POST" })
 
 export const createUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => createUserSchema.parse(input))
+  .validator((input: unknown) => createUserSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { assertAdmin, enforceRateLimit, recordActivity, ROLE_RANK } = await import(
       "./admin.server"
@@ -99,7 +99,7 @@ export const createUser = createServerFn({ method: "POST" })
 
 export const updateUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => updateUserSchema.parse(input))
+  .validator((input: unknown) => updateUserSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { assertAdmin, enforceRateLimit, recordActivity } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
@@ -110,33 +110,64 @@ export const updateUser = createServerFn({ method: "POST" })
       .from("profiles")
       .update({
         full_name: data.fullName,
-        phone: data.phone || null,
+        phone: data.phone ?? null,
         language: data.language,
         timezone: data.timezone,
         status: data.status,
       })
       .eq("id", data.userId);
+
     if (error) throw new Error(error.message);
 
     await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
-    await supabaseAdmin
-      .from("user_roles")
-      .insert({ user_id: data.userId, role: data.role });
+    if (data.role !== "user") {
+      await supabaseAdmin.from("user_roles").insert({ user_id: data.userId, role: data.role });
+    }
 
     await recordActivity({
       actorId: context.userId,
       action: "user.updated",
       entityType: "user",
       entityId: data.userId,
-      description: `Updated user profile and set role to ${data.role}`,
+      description: `Updated profile details and set role to ${data.role}`,
     });
 
     return { ok: true };
   });
 
+export const setUserPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(
+    z.object({
+      userId: z.string().uuid(),
+      password: z.string().min(8, "Password must be at least 8 characters").max(72),
+    })
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, enforceRateLimit, recordActivity } = await import("./admin.server");
+    await assertAdmin(context.supabase, context.userId);
+    enforceRateLimit(`set-password:${context.userId}`, 10, 60_000);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
+      password: data.password,
+    });
+    if (error) throw new Error(error.message);
+
+    await recordActivity({
+      actorId: context.userId,
+      action: "user.password_reset",
+      entityType: "user",
+      entityId: data.userId,
+      description: `Updated password for user ${data.userId}`,
+    });
+
+    return { success: true };
+  });
+
 export const deleteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ userId: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ userId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { assertAdmin, enforceRateLimit, recordActivity } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
@@ -206,7 +237,7 @@ const logsSchema = z.object({
 
 export const listActivityLogs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => logsSchema.parse(input))
+  .validator((input: unknown) => logsSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { assertStaff, sanitizeSearch } = await import("./admin.server");
     await assertStaff(context.supabase, context.userId);
@@ -245,7 +276,7 @@ export const listActivityLogs = createServerFn({ method: "POST" })
 
 export const listSystemLogs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => logsSchema.parse(input))
+  .validator((input: unknown) => logsSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { assertAdmin, sanitizeSearch } = await import("./admin.server");
     await assertAdmin(context.supabase, context.userId);
