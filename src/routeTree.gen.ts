@@ -48,6 +48,7 @@ import { Route as AuthenticatedAdminDiagnosticsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminExportsRouteImport } from './routes/_authenticated/admin/exports'
 import { Route as AuthenticatedAdminImportsRouteImport } from './routes/_authenticated/admin/imports'
 import { Route as AuthenticatedAdminMarketsRouteImport } from './routes/_authenticated/admin/markets'
+import { Route as AuthenticatedAdminNeccRouteImport } from './routes/_authenticated/admin/necc'
 import { Route as AuthenticatedAdminPagesRouteImport } from './routes/_authenticated/admin/pages'
 import { Route as AuthenticatedAdminQualityRouteImport } from './routes/_authenticated/admin/quality'
 import { Route as AuthenticatedAdminRateHistoryRouteImport } from './routes/_authenticated/admin/rate-history'
@@ -60,6 +61,7 @@ import { Route as AuthenticatedAdminSourcesRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminStatesRouteImport } from './routes/_authenticated/admin/states'
 import { Route as AuthenticatedAdminSystemLogsRouteImport } from './routes/_authenticated/admin/system-logs'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as ApiCronUpdateNeccRatesRouteImport } from './routes/api.cron.update-necc-rates'
 import { Route as ApiCronUpdateRatesRouteImport } from './routes/api.cron.update-rates'
 import { Route as CitySlugEggRateHistoryRouteImport } from './routes/city.$slug.egg-rate-history'
 import { Route as StateSlugEggRateHistoryRouteImport } from './routes/state.$slug.egg-rate-history'
@@ -266,6 +268,11 @@ const AuthenticatedAdminMarketsRoute =
     path: '/markets',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminNeccRoute = AuthenticatedAdminNeccRouteImport.update({
+  id: '/necc',
+  path: '/necc',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminPagesRoute = AuthenticatedAdminPagesRouteImport.update({
   id: '/pages',
   path: '/pages',
@@ -333,6 +340,11 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const ApiCronUpdateNeccRatesRoute = ApiCronUpdateNeccRatesRouteImport.update({
+  id: '/update-necc-rates',
+  path: '/update-necc-rates',
+  getParentRoute: () => ApiCronRoute,
+} as any)
 const ApiCronUpdateRatesRoute = ApiCronUpdateRatesRouteImport.update({
   id: '/update-rates',
   path: '/update-rates',
@@ -387,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/admin/exports': typeof AuthenticatedAdminExportsRoute
   '/admin/imports': typeof AuthenticatedAdminImportsRoute
   '/admin/markets': typeof AuthenticatedAdminMarketsRoute
+  '/admin/necc': typeof AuthenticatedAdminNeccRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/admin/quality': typeof AuthenticatedAdminQualityRoute
   '/admin/rate-history': typeof AuthenticatedAdminRateHistoryRoute
@@ -399,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/admin/states': typeof AuthenticatedAdminStatesRoute
   '/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/api/cron/update-necc-rates': typeof ApiCronUpdateNeccRatesRoute
   '/api/cron/update-rates': typeof ApiCronUpdateRatesRoute
   '/city/$slug/egg-rate-history': typeof CitySlugEggRateHistoryRoute
   '/state/$slug/egg-rate-history': typeof StateSlugEggRateHistoryRoute
@@ -441,6 +455,7 @@ export interface FileRoutesByTo {
   '/admin/exports': typeof AuthenticatedAdminExportsRoute
   '/admin/imports': typeof AuthenticatedAdminImportsRoute
   '/admin/markets': typeof AuthenticatedAdminMarketsRoute
+  '/admin/necc': typeof AuthenticatedAdminNeccRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/admin/quality': typeof AuthenticatedAdminQualityRoute
   '/admin/rate-history': typeof AuthenticatedAdminRateHistoryRoute
@@ -453,6 +468,7 @@ export interface FileRoutesByTo {
   '/admin/states': typeof AuthenticatedAdminStatesRoute
   '/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/api/cron/update-necc-rates': typeof ApiCronUpdateNeccRatesRoute
   '/api/cron/update-rates': typeof ApiCronUpdateRatesRoute
   '/city/$slug/egg-rate-history': typeof CitySlugEggRateHistoryRoute
   '/state/$slug/egg-rate-history': typeof StateSlugEggRateHistoryRoute
@@ -498,6 +514,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/exports': typeof AuthenticatedAdminExportsRoute
   '/_authenticated/admin/imports': typeof AuthenticatedAdminImportsRoute
   '/_authenticated/admin/markets': typeof AuthenticatedAdminMarketsRoute
+  '/_authenticated/admin/necc': typeof AuthenticatedAdminNeccRoute
   '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/_authenticated/admin/quality': typeof AuthenticatedAdminQualityRoute
   '/_authenticated/admin/rate-history': typeof AuthenticatedAdminRateHistoryRoute
@@ -510,6 +527,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/states': typeof AuthenticatedAdminStatesRoute
   '/_authenticated/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/api/cron/update-necc-rates': typeof ApiCronUpdateNeccRatesRoute
   '/api/cron/update-rates': typeof ApiCronUpdateRatesRoute
   '/city/$slug/egg-rate-history': typeof CitySlugEggRateHistoryRoute
   '/state/$slug/egg-rate-history': typeof StateSlugEggRateHistoryRoute
@@ -555,6 +573,7 @@ export interface FileRouteTypes {
     | '/admin/exports'
     | '/admin/imports'
     | '/admin/markets'
+    | '/admin/necc'
     | '/admin/pages'
     | '/admin/quality'
     | '/admin/rate-history'
@@ -567,6 +586,7 @@ export interface FileRouteTypes {
     | '/admin/states'
     | '/admin/system-logs'
     | '/admin/users'
+    | '/api/cron/update-necc-rates'
     | '/api/cron/update-rates'
     | '/city/$slug/egg-rate-history'
     | '/state/$slug/egg-rate-history'
@@ -609,6 +629,7 @@ export interface FileRouteTypes {
     | '/admin/exports'
     | '/admin/imports'
     | '/admin/markets'
+    | '/admin/necc'
     | '/admin/pages'
     | '/admin/quality'
     | '/admin/rate-history'
@@ -621,6 +642,7 @@ export interface FileRouteTypes {
     | '/admin/states'
     | '/admin/system-logs'
     | '/admin/users'
+    | '/api/cron/update-necc-rates'
     | '/api/cron/update-rates'
     | '/city/$slug/egg-rate-history'
     | '/state/$slug/egg-rate-history'
@@ -665,6 +687,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/exports'
     | '/_authenticated/admin/imports'
     | '/_authenticated/admin/markets'
+    | '/_authenticated/admin/necc'
     | '/_authenticated/admin/pages'
     | '/_authenticated/admin/quality'
     | '/_authenticated/admin/rate-history'
@@ -677,6 +700,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/states'
     | '/_authenticated/admin/system-logs'
     | '/_authenticated/admin/users'
+    | '/api/cron/update-necc-rates'
     | '/api/cron/update-rates'
     | '/city/$slug/egg-rate-history'
     | '/state/$slug/egg-rate-history'
@@ -988,6 +1012,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMarketsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/necc': {
+      id: '/_authenticated/admin/necc'
+      path: '/necc'
+      fullPath: '/admin/necc'
+      preLoaderRoute: typeof AuthenticatedAdminNeccRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/pages': {
       id: '/_authenticated/admin/pages'
       path: '/pages'
@@ -1072,6 +1103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/api/cron/update-necc-rates': {
+      id: '/api/cron/update-necc-rates'
+      path: '/update-necc-rates'
+      fullPath: '/api/cron/update-necc-rates'
+      preLoaderRoute: typeof ApiCronUpdateNeccRatesRouteImport
+      parentRoute: typeof ApiCronRoute
+    }
     '/api/cron/update-rates': {
       id: '/api/cron/update-rates'
       path: '/update-rates'
@@ -1107,6 +1145,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminExportsRoute: typeof AuthenticatedAdminExportsRoute
   AuthenticatedAdminImportsRoute: typeof AuthenticatedAdminImportsRoute
   AuthenticatedAdminMarketsRoute: typeof AuthenticatedAdminMarketsRoute
+  AuthenticatedAdminNeccRoute: typeof AuthenticatedAdminNeccRoute
   AuthenticatedAdminPagesRoute: typeof AuthenticatedAdminPagesRoute
   AuthenticatedAdminQualityRoute: typeof AuthenticatedAdminQualityRoute
   AuthenticatedAdminRateHistoryRoute: typeof AuthenticatedAdminRateHistoryRoute
@@ -1134,6 +1173,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminExportsRoute: AuthenticatedAdminExportsRoute,
     AuthenticatedAdminImportsRoute: AuthenticatedAdminImportsRoute,
     AuthenticatedAdminMarketsRoute: AuthenticatedAdminMarketsRoute,
+    AuthenticatedAdminNeccRoute: AuthenticatedAdminNeccRoute,
     AuthenticatedAdminPagesRoute: AuthenticatedAdminPagesRoute,
     AuthenticatedAdminQualityRoute: AuthenticatedAdminQualityRoute,
     AuthenticatedAdminRateHistoryRoute: AuthenticatedAdminRateHistoryRoute,
@@ -1166,10 +1206,12 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface ApiCronRouteChildren {
+  ApiCronUpdateNeccRatesRoute: typeof ApiCronUpdateNeccRatesRoute
   ApiCronUpdateRatesRoute: typeof ApiCronUpdateRatesRoute
 }
 
 const ApiCronRouteChildren: ApiCronRouteChildren = {
+  ApiCronUpdateNeccRatesRoute: ApiCronUpdateNeccRatesRoute,
   ApiCronUpdateRatesRoute: ApiCronUpdateRatesRoute,
 }
 
