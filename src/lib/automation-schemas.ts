@@ -11,6 +11,20 @@ export const automationJobStatusSchema = z.enum([
 
 export type AutomationJobStatus = z.infer<typeof automationJobStatusSchema>;
 
+export const syncSystemStatusSchema = z.enum([
+  "WAITING_FOR_TODAY",
+  "FETCHING",
+  "PROCESSING",
+  "VALIDATING",
+  "REVIEW_REQUIRED",
+  "PUBLISHED",
+  "PARTIAL",
+  "FAILED",
+  "STALE",
+]);
+
+export type SyncSystemStatus = z.infer<typeof syncSystemStatusSchema>;
+
 export const sourcePrioritySchema = z.coerce.number().int().min(1).max(10);
 
 export const automationSettingsSchema = z.object({

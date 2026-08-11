@@ -54,6 +54,7 @@ import { Route as AuthenticatedAdminRatesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminRolesRouteImport } from './routes/_authenticated/admin/roles'
 import { Route as AuthenticatedAdminSeoRouteImport } from './routes/_authenticated/admin/seo'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
+import { Route as AuthenticatedAdminSimulationRouteImport } from './routes/_authenticated/admin/simulation'
 import { Route as AuthenticatedAdminSourcesRouteImport } from './routes/_authenticated/admin/sources'
 import { Route as AuthenticatedAdminStatesRouteImport } from './routes/_authenticated/admin/states'
 import { Route as AuthenticatedAdminSystemLogsRouteImport } from './routes/_authenticated/admin/system-logs'
@@ -295,6 +296,12 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminSimulationRoute =
+  AuthenticatedAdminSimulationRouteImport.update({
+    id: '/simulation',
+    path: '/simulation',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminSourcesRoute =
   AuthenticatedAdminSourcesRouteImport.update({
     id: '/sources',
@@ -373,6 +380,7 @@ export interface FileRoutesByFullPath {
   '/admin/roles': typeof AuthenticatedAdminRolesRoute
   '/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/simulation': typeof AuthenticatedAdminSimulationRoute
   '/admin/sources': typeof AuthenticatedAdminSourcesRoute
   '/admin/states': typeof AuthenticatedAdminStatesRoute
   '/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
@@ -424,6 +432,7 @@ export interface FileRoutesByTo {
   '/admin/roles': typeof AuthenticatedAdminRolesRoute
   '/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/simulation': typeof AuthenticatedAdminSimulationRoute
   '/admin/sources': typeof AuthenticatedAdminSourcesRoute
   '/admin/states': typeof AuthenticatedAdminStatesRoute
   '/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
@@ -478,6 +487,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/roles': typeof AuthenticatedAdminRolesRoute
   '/_authenticated/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/simulation': typeof AuthenticatedAdminSimulationRoute
   '/_authenticated/admin/sources': typeof AuthenticatedAdminSourcesRoute
   '/_authenticated/admin/states': typeof AuthenticatedAdminStatesRoute
   '/_authenticated/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
@@ -532,6 +542,7 @@ export interface FileRouteTypes {
     | '/admin/roles'
     | '/admin/seo'
     | '/admin/settings'
+    | '/admin/simulation'
     | '/admin/sources'
     | '/admin/states'
     | '/admin/system-logs'
@@ -583,6 +594,7 @@ export interface FileRouteTypes {
     | '/admin/roles'
     | '/admin/seo'
     | '/admin/settings'
+    | '/admin/simulation'
     | '/admin/sources'
     | '/admin/states'
     | '/admin/system-logs'
@@ -636,6 +648,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/roles'
     | '/_authenticated/admin/seo'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/simulation'
     | '/_authenticated/admin/sources'
     | '/_authenticated/admin/states'
     | '/_authenticated/admin/system-logs'
@@ -992,6 +1005,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/simulation': {
+      id: '/_authenticated/admin/simulation'
+      path: '/simulation'
+      fullPath: '/admin/simulation'
+      preLoaderRoute: typeof AuthenticatedAdminSimulationRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/sources': {
       id: '/_authenticated/admin/sources'
       path: '/sources'
@@ -1054,6 +1074,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminRolesRoute: typeof AuthenticatedAdminRolesRoute
   AuthenticatedAdminSeoRoute: typeof AuthenticatedAdminSeoRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminSimulationRoute: typeof AuthenticatedAdminSimulationRoute
   AuthenticatedAdminSourcesRoute: typeof AuthenticatedAdminSourcesRoute
   AuthenticatedAdminStatesRoute: typeof AuthenticatedAdminStatesRoute
   AuthenticatedAdminSystemLogsRoute: typeof AuthenticatedAdminSystemLogsRoute
@@ -1079,6 +1100,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminRolesRoute: AuthenticatedAdminRolesRoute,
     AuthenticatedAdminSeoRoute: AuthenticatedAdminSeoRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+    AuthenticatedAdminSimulationRoute: AuthenticatedAdminSimulationRoute,
     AuthenticatedAdminSourcesRoute: AuthenticatedAdminSourcesRoute,
     AuthenticatedAdminStatesRoute: AuthenticatedAdminStatesRoute,
     AuthenticatedAdminSystemLogsRoute: AuthenticatedAdminSystemLogsRoute,

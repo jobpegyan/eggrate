@@ -32,11 +32,9 @@ async function handleCron(request: Request) {
   }
 
   try {
-    // 1. Run database RPC procedure to update rates for today
-    const { error: rpcError } = await supabase.rpc("auto_update_egg_rates");
-    if (rpcError) {
-      console.warn("[Cron] auto_update_egg_rates RPC warning:", rpcError.message);
-    }
+    const { AutomationEngine } = await import("@/services/automation-engine.server");
+    const engine = new AutomationEngine();
+    const pipelineResult = await engine.executeFullPipeline();
 
     const { data: sources } = await supabase
       .from("data_sources")
@@ -48,10 +46,11 @@ async function handleCron(request: Request) {
     await supabase.from("automation_audit_logs").insert({
       job_id: jobId,
       action: "cron_trigger",
-      status: "success",
+      status: pipelineResult.status === "FAILED" ? "failed" : "success",
       details: {
         sourcesCount: sources?.length || 0,
-        rpcExecuted: !rpcError,
+        coveragePercent: pipelineResult.coveragePercent,
+        status: pipelineResult.status,
         triggeredAt: new Date().toISOString(),
       },
     });

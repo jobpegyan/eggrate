@@ -9,6 +9,7 @@ import {
   Download,
   Egg,
   FileCode2,
+  FlaskConical,
   History,
   LayoutDashboard,
   Map,
@@ -86,6 +87,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     label: "Automation",
     items: [
       { label: "Data Pipeline", to: "/admin", icon: Activity },
+      { label: "Pipeline Simulation", to: "/admin/simulation", icon: FlaskConical, adminOnly: true },
       { label: "Data Quality", to: "/admin/quality", icon: ShieldCheck, adminOnly: true },
       { label: "Conflicts", to: "/admin/conflicts", icon: AlertTriangle, adminOnly: true },
       { label: "AI Analysis", to: "/admin/ai", icon: BrainCircuit, adminOnly: true },

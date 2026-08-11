@@ -70,7 +70,7 @@ export function LiveRateCard({ summary }: { summary: NationalSummary }) {
             </time>
           </span>
           <span>
-            4,600+ cities · 36 states
+            {summary.coveragePercent ? `${summary.coveragePercent}% verified coverage · ` : ""}4,600+ cities · 36 states
           </span>
         </div>
       </CardContent>

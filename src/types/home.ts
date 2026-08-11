@@ -17,6 +17,9 @@ export interface NationalSummary {
   marketsCount: number;
   citiesCount: number;
   statesCount: number;
+  status?: "WAITING_FOR_TODAY" | "FETCHING" | "PROCESSING" | "VALIDATING" | "REVIEW_REQUIRED" | "PUBLISHED" | "PARTIAL" | "FAILED" | "STALE";
+  coveragePercent?: number;
+  sourceName?: string;
 }
 
 export interface RegionRate {

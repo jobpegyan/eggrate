@@ -1,4 +1,22 @@
 import { DEFAULT_LOCALE } from "@/lib/constants";
+import { 
+  getCanonicalDateStr, 
+  parseServerDate, 
+  formatDisplayDate, 
+  formatPublicationTimestamp 
+} from "@/lib/date-system";
+
+export { 
+  getCanonicalDateStr, 
+  getCurrentDate, 
+  getCurrentDateTime, 
+  getYesterdayDate, 
+  getStartOfDay, 
+  getEndOfDay, 
+  formatDisplayDate, 
+  formatPublicationTimestamp, 
+  isDateEqual 
+} from "@/lib/date-system";
 
 const inrFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -44,12 +62,7 @@ export function formatNumber(value: number): string {
 }
 
 function toDate(input: string | Date): Date {
-  if (input instanceof Date) return input;
-  if (typeof input === "string" && /^\d{4}-\d{2}-\d{2}$/.test(input.trim())) {
-    const [y, m, d] = input.trim().split("-").map(Number);
-    return new Date(y, m - 1, d, 12, 0, 0);
-  }
-  return new Date(input);
+  return parseServerDate(input);
 }
 
 /** "4 Aug 2026" */
@@ -63,30 +76,17 @@ export function formatDate(input: string | Date, locale: string = DEFAULT_LOCALE
 
 /** "Tuesday, 4 August 2026" */
 export function formatDateLong(input: string | Date, locale: string = DEFAULT_LOCALE): string {
-  return new Intl.DateTimeFormat(`${locale}-IN`, {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(toDate(input));
+  return formatDisplayDate(input);
 }
 
 /** YYYY-MM-DD in IST, the canonical key for a rate day. */
 /** "4 Aug 2026, 18:30" */
 export function formatDateTime(input: string | Date, locale: string = DEFAULT_LOCALE): string {
-  return new Intl.DateTimeFormat(`${locale}-IN`, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(toDate(input));
+  return formatPublicationTimestamp(input);
 }
 
 export function toISODate(input: string | Date = new Date()): string {
-  const date = toDate(input);
-  const ist = new Date(date.getTime() + (330 + date.getTimezoneOffset()) * 60_000);
-  return `${ist.getFullYear()}-${String(ist.getMonth() + 1).padStart(2, "0")}-${String(ist.getDate()).padStart(2, "0")}`;
+  return getCanonicalDateStr(input);
 }
 
 /** "2 days ago" / "today" */

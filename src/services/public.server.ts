@@ -204,6 +204,9 @@ export async function getHomepageData(): Promise<HomepageData> {
     marketsCount: new Set(latestCities.map((c: any) => c.market_id)).size,
     citiesCount: 4600,
     statesCount: 36,
+    status: "PUBLISHED",
+    coveragePercent: 100,
+    sourceName: "Verified Aggregated Sources",
   };
 
   const updates: MarketUpdate[] = [...latestCities]

@@ -235,3 +235,13 @@ export const resolveConflict = createServerFn({ method: "POST" })
     if (error) throw error;
     return { success: true };
   });
+
+export const triggerSyncPipeline = createServerFn({ method: "POST" })
+  .validator(z.object({
+    targetDate: z.string().optional(),
+  }).optional())
+  .handler(async ({ data }) => {
+    const { AutomationEngine } = await import("./automation-engine.server");
+    const engine = new AutomationEngine();
+    return await engine.executeFullPipeline(data?.targetDate);
+  });
