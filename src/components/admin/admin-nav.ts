@@ -66,6 +66,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       { label: "Imports", to: "/admin/imports", icon: Upload },
       { label: "Exports", to: "/admin/exports", icon: Download },
       { label: "Data sources", to: "/admin/sources", icon: Database },
+      { label: "NECC Official", to: "/admin/necc", icon: ShieldCheck },
     ],
   },
   {
