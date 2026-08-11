@@ -242,53 +242,90 @@ export class ConnectorEngine {
           validationErrors.push(`JSON Endpoint returned HTTP ${res.status}`);
         }
       } else {
-        // HTML or fallback parser
+        // HTML or EggRateLab parser
         const res = await fetch(cleanUrl, {
-          headers: { "User-Agent": "EggRateIndia-Collector/1.0 (+https://www.egg-rate.today)" },
-          signal: AbortSignal.timeout(8000),
+          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) EggRateIndia-Collector/1.0" },
+          signal: AbortSignal.timeout(10000),
         });
 
         if (res.ok) {
           const htmlText = await res.text();
-          // Extract basic sample items from HTML
-          rawItems = [{ html_content: htmlText.slice(0, 500), url: cleanUrl }];
+          const table0 = htmlText.match(/<table[\s\S]*?<\/table>/gi)?.[0];
+
+          if (table0) {
+            const trs = table0.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+            const todayStr = getCurrentDate();
+
+            for (let i = 1; i < trs.length; i++) {
+              const tr = trs[i];
+              const cityMatch = tr.match(/<a[^>]*>(.*?)<\/a>/i) || tr.match(/<th[^>]*>(.*?)<\/th>/i);
+              const tds = tr.match(/<td[^>]*>(.*?)<\/td>/gi) || [];
+
+              if (cityMatch && tds.length >= 4) {
+                const rawCity = cityMatch[1].replace(/<[^>]+>/g, "").trim();
+                const piece = parseFloat(tds[0].replace(/<[^>]+>/g, "").replace(/₹|\s/g, "").trim());
+                const tray = parseFloat(tds[1].replace(/<[^>]+>/g, "").replace(/₹|\s/g, "").trim());
+                const hundred = parseFloat(tds[2].replace(/<[^>]+>/g, "").replace(/₹|\s/g, "").trim());
+                const peti = parseFloat(tds[3].replace(/<[^>]+>/g, "").replace(/₹|\s/g, "").trim());
+
+                if (rawCity && !isNaN(piece) && piece > 0) {
+                  rawItems.push({
+                    city: rawCity,
+                    piece,
+                    tray,
+                    hundred,
+                    peti,
+                    effective_date: todayStr,
+                    source_url: cleanUrl,
+                  });
+                }
+              }
+            }
+          }
+
+          if (rawItems.length === 0) {
+            rawItems = [{ html_content: htmlText.slice(0, 500), url: cleanUrl }];
+          }
         } else {
           validationErrors.push(`Target page returned HTTP ${res.status}`);
         }
       }
 
-      // Map raw items using fieldMappings
-      const mappings = config.fieldMappings || [
-        { sourceField: "title.rendered", targetField: "title" },
-        { sourceField: "date", targetField: "effective_date" },
-        { sourceField: "slug", targetField: "slug" },
-      ];
-
+      // Map raw items using fieldMappings or default EggRateLab schema
       const mappedRecords: Record<string, any>[] = [];
 
       for (const item of rawItems) {
-        const mappedObj: Record<string, any> = {
-          fetched_at: getCurrentDateTime(),
-          source_url: cleanUrl,
-        };
-
-        for (const m of mappings) {
-          // Resolve nested dot notation e.g. "title.rendered"
-          const rawVal = m.sourceField.split(".").reduce((acc, part) => acc && acc[part], item);
-          const transformed = this.applyTransformation(rawVal || m.defaultValue || "", m.transformations);
-          mappedObj[m.targetField] = transformed;
-        }
-
-        // Egg Rate Mode defaults
-        if (config.isEggRateMode) {
-          if (!mappedObj["effective_date"]) mappedObj["effective_date"] = getCurrentDate();
-          if (!mappedObj["currency"]) mappedObj["currency"] = "INR";
-          if (!mappedObj["egg_rate"] && mappedObj["price"]) {
-            mappedObj["egg_rate"] = this.applyTransformation(mappedObj["price"], ["remove_currency", "remove_commas", "parse_number"]);
+        if (item.city && item.piece) {
+          mappedRecords.push({
+            city: item.city,
+            egg_rate: item.piece,
+            tray_price: item.tray || item.piece * 30,
+            hundred_price: item.hundred || item.piece * 100,
+            peti_price: item.peti || item.piece * 210,
+            wholesale_price: item.piece,
+            retail_price: Number((item.piece * 1.06).toFixed(2)),
+            currency: "INR",
+            effective_date: item.effective_date || getCurrentDate(),
+            source_name: "EggRateLab",
+            original_url: cleanUrl,
+            fetched_at: getCurrentDateTime(),
+          });
+        } else {
+          const mappedObj: Record<string, any> = {
+            fetched_at: getCurrentDateTime(),
+            source_url: cleanUrl,
+          };
+          const mappings = config.fieldMappings || [
+            { sourceField: "title.rendered", targetField: "title" },
+            { sourceField: "date", targetField: "effective_date" },
+            { sourceField: "slug", targetField: "slug" },
+          ];
+          for (const m of mappings) {
+            const rawVal = m.sourceField.split(".").reduce((acc, part) => acc && acc[part], item);
+            mappedObj[m.targetField] = this.applyTransformation(rawVal || m.defaultValue || "", m.transformations);
           }
+          mappedRecords.push(mappedObj);
         }
-
-        mappedRecords.push(mappedObj);
       }
 
       const validCount = mappedRecords.filter((r) => r["effective_date"] && (r["egg_rate"] || r["title"])).length;
