@@ -300,6 +300,15 @@ export class NECCConnectorEngine {
     }
 
     let importedCount = 0;
+    let upsertErrorMsg = "";
+
+    // Detailed diagnostic logging
+    console.log(`[NECC] todayStr=${todayStr} day=${day} recordsToImport=${recordsToImport.length} dbCities=${dbCities?.length} dbMarkets=${dbMarkets?.length} dbRows=${dbRows.length}`);
+
+    if (dbRows.length === 0) {
+      console.warn("[NECC] dbRows is empty — no cities matched. recordsToImport sample:", JSON.stringify(recordsToImport.slice(0, 3)));
+    }
+
     if (dbRows.length > 0) {
       const { error: upsertErr } = await supabaseAdmin.from("egg_rates").upsert(dbRows, {
         onConflict: "city_id,market_id,effective_date",
@@ -308,28 +317,45 @@ export class NECCConnectorEngine {
 
       if (!upsertErr) {
         importedCount = dbRows.length;
+        console.log(`[NECC] Upsert success: ${importedCount} rows`);
+      } else {
+        upsertErrorMsg = upsertErr.message;
+        console.error("[NECC] Upsert error:", upsertErr.message, upsertErr);
       }
     }
 
-    // Verification Query
-    const { data: dbCheck } = await supabaseAdmin.from("egg_rates").select("id").eq("effective_date", todayStr);
+    // Verification Query — use service_role so RLS doesn't block
+    const { data: dbCheck, error: checkErr } = await supabaseAdmin
+      .from("egg_rates")
+      .select("id")
+      .eq("effective_date", todayStr)
+      .eq("is_published", true);
+
     const dbConfirmedCount = dbCheck?.length || 0;
+    console.log(`[NECC] DB verify: confirmed=${dbConfirmedCount} checkErr=${checkErr?.message}`);
+
     const isSuccess = importedCount > 0 || dbConfirmedCount > 0;
 
     // Audit log
-    await supabaseAdmin.from("automation_audit_logs").insert({
-      job_id: `necc-${Date.now()}`,
-      action: "necc_rate_update",
-      status: isSuccess ? "success" : "failed",
-      details: {
-        target_date: todayStr,
-        fetched: recordsToImport.length,
-        imported: importedCount,
-        db_confirmed: dbConfirmedCount,
-        coverage_percent: monthResult.coveragePercent,
-        timestamp: startTime,
-      },
-    });
+    try {
+      await supabaseAdmin.from("automation_audit_logs").insert({
+        job_id: `necc-${Date.now()}`,
+        action: "necc_rate_update",
+        status: isSuccess ? "success" : "failed",
+        details: {
+          target_date: todayStr,
+          fetched: recordsToImport.length,
+          db_rows_prepared: dbRows.length,
+          imported: importedCount,
+          db_confirmed: dbConfirmedCount,
+          upsert_error: upsertErrorMsg || null,
+          coverage_percent: monthResult.coveragePercent,
+          timestamp: startTime,
+        },
+      });
+    } catch (auditErr: any) {
+      console.warn("[NECC] Audit log failed:", auditErr.message);
+    }
 
     return {
       success: isSuccess,
@@ -338,8 +364,9 @@ export class NECCConnectorEngine {
       dbConfirmedCount,
       coveragePercent: monthResult.coveragePercent,
       note: isSuccess
-        ? `Successfully imported ${importedCount} official NECC rate records for ${todayStr}.`
-        : "Failed to insert NECC rates into database.",
+        ? `Successfully imported ${importedCount} official NECC rate records for ${todayStr}. DB confirmed: ${dbConfirmedCount}.`
+        : `Failed to insert NECC rates. dbRows=${dbRows.length} upsertError=${upsertErrorMsg || "none"} dbConfirmed=${dbConfirmedCount}`,
     };
   }
 }
+
