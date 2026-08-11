@@ -1,6 +1,11 @@
 import { validatePublicUrl } from "@/lib/security.server";
 import { getCurrentDate, getCurrentDateTime } from "@/lib/date-system";
 
+const DEFAULT_HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+  "Accept": "application/json, text/html, */*",
+};
+
 export type ConnectorKind = "auto" | "wordpress" | "api" | "json" | "rss" | "html" | "csv" | "custom";
 
 export interface FieldMappingConfig {
@@ -66,7 +71,7 @@ export class ConnectorEngine {
       // 1. Probe WordPress REST API
       const wpProbeUrl = `${baseUrl}/wp-json/wp/v2/posts?per_page=3`;
       const wpRes = await fetch(wpProbeUrl, {
-        headers: { "User-Agent": "EggRateIndia-Collector/1.0 (+https://www.egg-rate.today)" },
+        headers: DEFAULT_HEADERS,
         signal: AbortSignal.timeout(5000),
       });
 
@@ -93,7 +98,7 @@ export class ConnectorEngine {
       // 2. Probe RSS / Atom feed
       const rssProbeUrl = `${baseUrl}/feed/`;
       const rssRes = await fetch(rssProbeUrl, {
-        headers: { "User-Agent": "EggRateIndia-Collector/1.0 (+https://www.egg-rate.today)" },
+        headers: DEFAULT_HEADERS,
         signal: AbortSignal.timeout(5000),
       });
 
@@ -115,7 +120,7 @@ export class ConnectorEngine {
     try {
       // 3. Probe target URL for JSON vs HTML
       const mainRes = await fetch(cleanUrl, {
-        headers: { "User-Agent": "EggRateIndia-Collector/1.0 (+https://www.egg-rate.today)" },
+        headers: DEFAULT_HEADERS,
         signal: AbortSignal.timeout(6000),
       });
 
@@ -219,7 +224,7 @@ export class ConnectorEngine {
         const parsedUrl = new URL(cleanUrl);
         const wpUrl = `${parsedUrl.protocol}//${parsedUrl.host}/wp-json/wp/v2/posts?per_page=${config.pageLimit || 10}`;
         const res = await fetch(wpUrl, {
-          headers: { "User-Agent": "EggRateIndia-Collector/1.0 (+https://www.egg-rate.today)" },
+          headers: DEFAULT_HEADERS,
           signal: AbortSignal.timeout(8000),
         });
 
@@ -231,7 +236,7 @@ export class ConnectorEngine {
         }
       } else if (config.kind === "json" || config.kind === "api") {
         const res = await fetch(cleanUrl, {
-          headers: { "User-Agent": "EggRateIndia-Collector/1.0 (+https://www.egg-rate.today)" },
+          headers: DEFAULT_HEADERS,
           signal: AbortSignal.timeout(8000),
         });
 
@@ -244,7 +249,7 @@ export class ConnectorEngine {
       } else {
         // HTML or EggRateLab parser
         const res = await fetch(cleanUrl, {
-          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) EggRateIndia-Collector/1.0" },
+          headers: DEFAULT_HEADERS,
           signal: AbortSignal.timeout(10000),
         });
 
