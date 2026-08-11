@@ -241,7 +241,6 @@ export async function getCityPageData(slug: string): Promise<CityPageData | null
     ? mean(yesterday.map((row) => Number(row.egg_rate)))
     : perEgg;
 
-  const todayStr = toISODate();
   const latestDate = dates[0] ?? "";
   const effectiveDate = (latestDate && latestDate >= todayStr) ? latestDate : todayStr;
   const previousDate = (latestDate && latestDate < todayStr) ? latestDate : (dates[1] ?? null);

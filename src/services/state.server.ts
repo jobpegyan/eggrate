@@ -277,7 +277,6 @@ export async function getStatePageData(slug: string): Promise<StatePageData | nu
   const previousPerEgg = yesterday.length ? mean(yesterday.map((r) => Number(r.egg_rate))) : perEgg;
   const monthValues = series.d30.map((point) => point.perEgg);
 
-  const todayStr = toISODate();
   const latestDate = dates[0] ?? "";
   const effectiveDate = (latestDate && latestDate >= todayStr) ? latestDate : todayStr;
 
