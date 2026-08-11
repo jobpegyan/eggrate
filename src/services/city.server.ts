@@ -4,6 +4,7 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 import { listArticles } from "@/services/public.server";
+import { toISODate } from "@/utils/format";
 import type { ChartPoint, Faq } from "@/types/home";
 import type {
   CityAnalytics,
@@ -210,6 +211,11 @@ export async function getCityPageData(slug: string): Promise<CityPageData | null
     ? mean(yesterday.map((row) => Number(row.egg_rate)))
     : perEgg;
 
+  const todayStr = toISODate();
+  const latestDate = dates[0] ?? "";
+  const effectiveDate = (latestDate && latestDate >= todayStr) ? latestDate : todayStr;
+  const previousDate = (latestDate && latestDate < todayStr) ? latestDate : (dates[1] ?? null);
+
   const summary: CityRateSummary | null =
     today.length === 0
       ? null
@@ -224,8 +230,8 @@ export async function getCityPageData(slug: string): Promise<CityPageData | null
           perPeti: mean(today.map((r) => Number(r.peti_price ?? Number(r.egg_rate) * 210))),
           wholesale: mean(today.map((r) => Number(r.wholesale_price ?? r.egg_rate))),
           retail: mean(today.map((r) => Number(r.retail_price ?? r.egg_rate))),
-          effectiveDate: dates[0] ?? "",
-          previousDate: dates[1] ?? null,
+          effectiveDate,
+          previousDate,
           lastUpdated: today.map((row) => row.updated_at).sort().at(-1) ?? "",
           verified: today.every((row) => row.is_verified),
         };

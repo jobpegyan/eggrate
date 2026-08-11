@@ -4,6 +4,7 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 import { listArticles } from "@/services/public.server";
+import { toISODate } from "@/utils/format";
 import type { ChartPoint, Faq, RegionRate } from "@/types/home";
 import type {
   MarketRow,
@@ -246,6 +247,10 @@ export async function getStatePageData(slug: string): Promise<StatePageData | nu
   const previousPerEgg = yesterday.length ? mean(yesterday.map((r) => Number(r.egg_rate))) : perEgg;
   const monthValues = series.d30.map((point) => point.perEgg);
 
+  const todayStr = toISODate();
+  const latestDate = dates[0] ?? "";
+  const effectiveDate = (latestDate && latestDate >= todayStr) ? latestDate : todayStr;
+
   const summary: StateRateSummary | null =
     today.length === 0
       ? null
@@ -264,7 +269,7 @@ export async function getStatePageData(slug: string): Promise<StatePageData | nu
           perTray: mean(today.map((r) => Number(r.tray_price ?? Number(r.egg_rate) * 30))),
           perHundred: mean(today.map((r) => Number(r.hundred_price ?? Number(r.egg_rate) * 100))),
           perPeti: mean(today.map((r) => Number(r.peti_price ?? Number(r.egg_rate) * 210))),
-          effectiveDate: dates[0] ?? "",
+          effectiveDate,
           lastUpdated: today.map((row) => row.updated_at).sort().at(-1) ?? "",
           verified: today.every((row) => row.is_verified),
         };
