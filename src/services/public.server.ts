@@ -111,8 +111,31 @@ function highlights(cities: RegionRate[]): TrendingHighlights {
 }
 
 export async function getHomepageData(): Promise<HomepageData> {
-  const [latestCities, history, faqs, articles] = await Promise.all([
-    loadLatestRates(),
+  let latestCities = await loadLatestRates();
+  let latestCityDate = (latestCities as any[])
+    .map((c) => c.effective_date)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+
+  const todayStr = toISODate();
+  if (!latestCityDate || latestCityDate < todayStr) {
+    try {
+      const { error: rpcErr } = await supabase.rpc("auto_update_egg_rates");
+      if (!rpcErr) {
+        latestCities = await loadLatestRates();
+        latestCityDate = (latestCities as any[])
+          .map((c) => c.effective_date)
+          .filter(Boolean)
+          .sort()
+          .at(-1);
+      }
+    } catch {
+      // Non-blocking auto-healing
+    }
+  }
+
+  const [history, faqs, articles] = await Promise.all([
     loadNationalHistory(),
     listFaqs(),
     listArticles(4),

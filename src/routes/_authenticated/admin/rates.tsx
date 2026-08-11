@@ -235,6 +235,18 @@ function RatesPage() {
     onError: (error: Error) => toast.error("Could not update the rate", error.message),
   });
 
+  const triggerAutoUpdate = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc("auto_update_egg_rates");
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: async () => {
+      toast.success("Rates Auto-Updated", "Today's rates have been refreshed across all active markets.");
+      await invalidate();
+    },
+    onError: (error: Error) => toast.error("Auto-update failed", error.message),
+  });
+
   const rows = query.data?.rows ?? [];
   const allSelected = rows.length > 0 && rows.every((row) => selected.includes(row.id));
 
@@ -391,9 +403,22 @@ function RatesPage() {
                   {/* ... other filters can be added here if needed ... */}
                </div>
             </FilterSheet>
-            <Button variant="outline" size="sm" onClick={() => setDuplicateOpen(true)}>
-              <CopyPlus className="h-4 w-4" /> <span className="hidden xs:inline">Duplicate day</span>
-            </Button>
+             <Button
+               variant="outline"
+               size="sm"
+               disabled={triggerAutoUpdate.isPending}
+               onClick={() => triggerAutoUpdate.mutate()}
+             >
+               {triggerAutoUpdate.isPending ? (
+                 <Loader2 className="h-4 w-4 animate-spin" />
+               ) : (
+                 <RefreshCw className="h-4 w-4" />
+               )}
+               <span className="hidden xs:inline">Auto update rates</span>
+             </Button>
+             <Button variant="outline" size="sm" onClick={() => setDuplicateOpen(true)}>
+               <CopyPlus className="h-4 w-4" /> <span className="hidden xs:inline">Duplicate day</span>
+             </Button>
             <Button
               size="sm"
               onClick={() => {

@@ -32,6 +32,12 @@ async function handleCron(request: Request) {
   }
 
   try {
+    // 1. Run database RPC procedure to update rates for today
+    const { error: rpcError } = await supabase.rpc("auto_update_egg_rates");
+    if (rpcError) {
+      console.warn("[Cron] auto_update_egg_rates RPC warning:", rpcError.message);
+    }
+
     const { data: sources } = await supabase
       .from("data_sources")
       .select("id, name")
@@ -45,6 +51,7 @@ async function handleCron(request: Request) {
       status: "success",
       details: {
         sourcesCount: sources?.length || 0,
+        rpcExecuted: !rpcError,
         triggeredAt: new Date().toISOString(),
       },
     });
@@ -52,7 +59,7 @@ async function handleCron(request: Request) {
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Cron job executed successfully",
+        message: "Cron job executed successfully & rates refreshed",
         jobId,
         activeSources: sources?.length || 0,
         timestamp: new Date().toISOString(),
