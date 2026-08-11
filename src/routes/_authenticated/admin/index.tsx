@@ -23,6 +23,7 @@ import {
 } from "@/services/automation.functions";
 
 export const Route = createFileRoute('/_authenticated/admin/')({
+  ssr: false,
   component: AdminDashboard,
 });
 

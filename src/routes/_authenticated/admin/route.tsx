@@ -14,6 +14,7 @@ import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: `Admin console — ${SITE.name}` },
