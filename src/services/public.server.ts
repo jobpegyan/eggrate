@@ -148,12 +148,6 @@ export async function getHomepageData(): Promise<HomepageData> {
     .range(1, 1)
     .maybeSingle();
 
-  const latestCityDate = (latestCities as any[])
-    .map((c) => c.effective_date)
-    .filter(Boolean)
-    .sort()
-    .at(-1);
-
   const effectiveDate = latestCityDate || history.at(-1)?.date || toISODate();
 
   const cities = latestCities.sort((a, b) => {
