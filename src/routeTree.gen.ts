@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdminAiRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin/announcements'
 import { Route as AuthenticatedAdminCitiesRouteImport } from './routes/_authenticated/admin/cities'
 import { Route as AuthenticatedAdminConflictsRouteImport } from './routes/_authenticated/admin/conflicts'
+import { Route as AuthenticatedAdminDiagnosticsRouteImport } from './routes/_authenticated/admin/diagnostics'
 import { Route as AuthenticatedAdminExportsRouteImport } from './routes/_authenticated/admin/exports'
 import { Route as AuthenticatedAdminImportsRouteImport } from './routes/_authenticated/admin/imports'
 import { Route as AuthenticatedAdminMarketsRouteImport } from './routes/_authenticated/admin/markets'
@@ -59,6 +60,7 @@ import { Route as AuthenticatedAdminSourcesRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminStatesRouteImport } from './routes/_authenticated/admin/states'
 import { Route as AuthenticatedAdminSystemLogsRouteImport } from './routes/_authenticated/admin/system-logs'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as ApiCronUpdateRatesRouteImport } from './routes/api.cron.update-rates'
 import { Route as CitySlugEggRateHistoryRouteImport } from './routes/city.$slug.egg-rate-history'
 import { Route as StateSlugEggRateHistoryRouteImport } from './routes/state.$slug.egg-rate-history'
 
@@ -240,6 +242,12 @@ const AuthenticatedAdminConflictsRoute =
     path: '/conflicts',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminDiagnosticsRoute =
+  AuthenticatedAdminDiagnosticsRouteImport.update({
+    id: '/diagnostics',
+    path: '/diagnostics',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminExportsRoute =
   AuthenticatedAdminExportsRouteImport.update({
     id: '/exports',
@@ -325,6 +333,11 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const ApiCronUpdateRatesRoute = ApiCronUpdateRatesRouteImport.update({
+  id: '/update-rates',
+  path: '/update-rates',
+  getParentRoute: () => ApiCronRoute,
+} as any)
 const CitySlugEggRateHistoryRoute = CitySlugEggRateHistoryRouteImport.update({
   id: '/egg-rate-history',
   path: '/egg-rate-history',
@@ -357,7 +370,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/api/cron': typeof ApiCronRoute
+  '/api/cron': typeof ApiCronRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -370,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/cities': typeof AuthenticatedAdminCitiesRoute
   '/admin/conflicts': typeof AuthenticatedAdminConflictsRoute
+  '/admin/diagnostics': typeof AuthenticatedAdminDiagnosticsRoute
   '/admin/exports': typeof AuthenticatedAdminExportsRoute
   '/admin/imports': typeof AuthenticatedAdminImportsRoute
   '/admin/markets': typeof AuthenticatedAdminMarketsRoute
@@ -385,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/admin/states': typeof AuthenticatedAdminStatesRoute
   '/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/api/cron/update-rates': typeof ApiCronUpdateRatesRoute
   '/city/$slug/egg-rate-history': typeof CitySlugEggRateHistoryRoute
   '/state/$slug/egg-rate-history': typeof StateSlugEggRateHistoryRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -409,7 +424,7 @@ export interface FileRoutesByTo {
   '/states': typeof StatesRoute
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
-  '/api/cron': typeof ApiCronRoute
+  '/api/cron': typeof ApiCronRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -422,6 +437,7 @@ export interface FileRoutesByTo {
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/cities': typeof AuthenticatedAdminCitiesRoute
   '/admin/conflicts': typeof AuthenticatedAdminConflictsRoute
+  '/admin/diagnostics': typeof AuthenticatedAdminDiagnosticsRoute
   '/admin/exports': typeof AuthenticatedAdminExportsRoute
   '/admin/imports': typeof AuthenticatedAdminImportsRoute
   '/admin/markets': typeof AuthenticatedAdminMarketsRoute
@@ -437,6 +453,7 @@ export interface FileRoutesByTo {
   '/admin/states': typeof AuthenticatedAdminStatesRoute
   '/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/api/cron/update-rates': typeof ApiCronUpdateRatesRoute
   '/city/$slug/egg-rate-history': typeof CitySlugEggRateHistoryRoute
   '/state/$slug/egg-rate-history': typeof StateSlugEggRateHistoryRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -464,7 +481,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/api/cron': typeof ApiCronRoute
+  '/api/cron': typeof ApiCronRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -477,6 +494,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/_authenticated/admin/cities': typeof AuthenticatedAdminCitiesRoute
   '/_authenticated/admin/conflicts': typeof AuthenticatedAdminConflictsRoute
+  '/_authenticated/admin/diagnostics': typeof AuthenticatedAdminDiagnosticsRoute
   '/_authenticated/admin/exports': typeof AuthenticatedAdminExportsRoute
   '/_authenticated/admin/imports': typeof AuthenticatedAdminImportsRoute
   '/_authenticated/admin/markets': typeof AuthenticatedAdminMarketsRoute
@@ -492,6 +510,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/states': typeof AuthenticatedAdminStatesRoute
   '/_authenticated/admin/system-logs': typeof AuthenticatedAdminSystemLogsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/api/cron/update-rates': typeof ApiCronUpdateRatesRoute
   '/city/$slug/egg-rate-history': typeof CitySlugEggRateHistoryRoute
   '/state/$slug/egg-rate-history': typeof StateSlugEggRateHistoryRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -532,6 +551,7 @@ export interface FileRouteTypes {
     | '/admin/announcements'
     | '/admin/cities'
     | '/admin/conflicts'
+    | '/admin/diagnostics'
     | '/admin/exports'
     | '/admin/imports'
     | '/admin/markets'
@@ -547,6 +567,7 @@ export interface FileRouteTypes {
     | '/admin/states'
     | '/admin/system-logs'
     | '/admin/users'
+    | '/api/cron/update-rates'
     | '/city/$slug/egg-rate-history'
     | '/state/$slug/egg-rate-history'
     | '/admin/'
@@ -584,6 +605,7 @@ export interface FileRouteTypes {
     | '/admin/announcements'
     | '/admin/cities'
     | '/admin/conflicts'
+    | '/admin/diagnostics'
     | '/admin/exports'
     | '/admin/imports'
     | '/admin/markets'
@@ -599,6 +621,7 @@ export interface FileRouteTypes {
     | '/admin/states'
     | '/admin/system-logs'
     | '/admin/users'
+    | '/api/cron/update-rates'
     | '/city/$slug/egg-rate-history'
     | '/state/$slug/egg-rate-history'
     | '/admin'
@@ -638,6 +661,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/announcements'
     | '/_authenticated/admin/cities'
     | '/_authenticated/admin/conflicts'
+    | '/_authenticated/admin/diagnostics'
     | '/_authenticated/admin/exports'
     | '/_authenticated/admin/imports'
     | '/_authenticated/admin/markets'
@@ -653,6 +677,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/states'
     | '/_authenticated/admin/system-logs'
     | '/_authenticated/admin/users'
+    | '/api/cron/update-rates'
     | '/city/$slug/egg-rate-history'
     | '/state/$slug/egg-rate-history'
     | '/_authenticated/admin/'
@@ -679,7 +704,7 @@ export interface RootRouteChildren {
   StatesRoute: typeof StatesRoute
   TermsRoute: typeof TermsRoute
   TrendsRoute: typeof TrendsRoute
-  ApiCronRoute: typeof ApiCronRoute
+  ApiCronRoute: typeof ApiCronRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
   CompareSlugRoute: typeof CompareSlugRoute
@@ -935,6 +960,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConflictsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/diagnostics': {
+      id: '/_authenticated/admin/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/admin/diagnostics'
+      preLoaderRoute: typeof AuthenticatedAdminDiagnosticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/exports': {
       id: '/_authenticated/admin/exports'
       path: '/exports'
@@ -1040,6 +1072,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/api/cron/update-rates': {
+      id: '/api/cron/update-rates'
+      path: '/update-rates'
+      fullPath: '/api/cron/update-rates'
+      preLoaderRoute: typeof ApiCronUpdateRatesRouteImport
+      parentRoute: typeof ApiCronRoute
+    }
     '/city/$slug/egg-rate-history': {
       id: '/city/$slug/egg-rate-history'
       path: '/egg-rate-history'
@@ -1064,6 +1103,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAnnouncementsRoute: typeof AuthenticatedAdminAnnouncementsRoute
   AuthenticatedAdminCitiesRoute: typeof AuthenticatedAdminCitiesRoute
   AuthenticatedAdminConflictsRoute: typeof AuthenticatedAdminConflictsRoute
+  AuthenticatedAdminDiagnosticsRoute: typeof AuthenticatedAdminDiagnosticsRoute
   AuthenticatedAdminExportsRoute: typeof AuthenticatedAdminExportsRoute
   AuthenticatedAdminImportsRoute: typeof AuthenticatedAdminImportsRoute
   AuthenticatedAdminMarketsRoute: typeof AuthenticatedAdminMarketsRoute
@@ -1090,6 +1130,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminAnnouncementsRoute: AuthenticatedAdminAnnouncementsRoute,
     AuthenticatedAdminCitiesRoute: AuthenticatedAdminCitiesRoute,
     AuthenticatedAdminConflictsRoute: AuthenticatedAdminConflictsRoute,
+    AuthenticatedAdminDiagnosticsRoute: AuthenticatedAdminDiagnosticsRoute,
     AuthenticatedAdminExportsRoute: AuthenticatedAdminExportsRoute,
     AuthenticatedAdminImportsRoute: AuthenticatedAdminImportsRoute,
     AuthenticatedAdminMarketsRoute: AuthenticatedAdminMarketsRoute,
@@ -1123,6 +1164,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface ApiCronRouteChildren {
+  ApiCronUpdateRatesRoute: typeof ApiCronUpdateRatesRoute
+}
+
+const ApiCronRouteChildren: ApiCronRouteChildren = {
+  ApiCronUpdateRatesRoute: ApiCronUpdateRatesRoute,
+}
+
+const ApiCronRouteWithChildren =
+  ApiCronRoute._addFileChildren(ApiCronRouteChildren)
 
 interface CitySlugRouteChildren {
   CitySlugEggRateHistoryRoute: typeof CitySlugEggRateHistoryRoute
@@ -1169,7 +1221,7 @@ const rootRouteChildren: RootRouteChildren = {
   StatesRoute: StatesRoute,
   TermsRoute: TermsRoute,
   TrendsRoute: TrendsRoute,
-  ApiCronRoute: ApiCronRoute,
+  ApiCronRoute: ApiCronRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,
   CompareSlugRoute: CompareSlugRoute,

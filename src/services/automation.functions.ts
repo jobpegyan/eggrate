@@ -245,3 +245,51 @@ export const triggerSyncPipeline = createServerFn({ method: "POST" })
     const engine = new AutomationEngine();
     return await engine.executeFullPipeline(data?.targetDate);
   });
+
+export const getDiagnosticsData = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { getCurrentDate, getYesterdayDate } = await import("@/lib/date-system");
+    const businessDate = getCurrentDate();
+    const yesterdayDate = getYesterdayDate();
+
+    // 1. Query active data sources
+    const { data: sources, error: sourcesErr } = await supabase
+      .from("data_sources")
+      .select("id, name, kind, status, updated_at")
+      .eq("status", "active");
+
+    const connectedSourcesCount = sources?.length || 0;
+    const isSourceConnected = connectedSourcesCount > 0;
+
+    // 2. Query today's rate count & last published timestamp
+    const { data: todayRates, count: todayPublishedCount } = await supabase
+      .from("egg_rates")
+      .select("id, published_at, updated_at", { count: "exact" })
+      .eq("effective_date", businessDate)
+      .eq("is_published", true);
+
+    const lastPublishedTimestamp = todayRates?.[0]?.published_at || todayRates?.[0]?.updated_at || null;
+
+    // 3. Query audit logs for last successful run
+    const { data: lastLog } = await supabase
+      .from("automation_audit_logs")
+      .select("created_at, details, status")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    return {
+      serverTime: new Date().toISOString(),
+      indiaTime: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+      businessDate,
+      yesterdayDate,
+      isSourceConnected,
+      connectedSourcesCount,
+      activeSources: sources || [],
+      todayPublishedCount: todayPublishedCount || 0,
+      lastPublishedTimestamp,
+      lastLog,
+      cronConfigured: true,
+      cronEndpoint: "/api/cron/update-rates",
+    };
+  });

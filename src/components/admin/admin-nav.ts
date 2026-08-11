@@ -87,6 +87,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     label: "Automation",
     items: [
       { label: "Data Pipeline", to: "/admin", icon: Activity },
+      { label: "Diagnostics", to: "/admin/diagnostics", icon: Activity, adminOnly: true },
       { label: "Pipeline Simulation", to: "/admin/simulation", icon: FlaskConical, adminOnly: true },
       { label: "Data Quality", to: "/admin/quality", icon: ShieldCheck, adminOnly: true },
       { label: "Conflicts", to: "/admin/conflicts", icon: AlertTriangle, adminOnly: true },
