@@ -3,7 +3,7 @@ import { BadgeCheck, Clock3, Egg } from "lucide-react";
 import { TrendPill } from "@/components/home/trend-pill";
 import { Card, CardContent } from "@/components/ui/card";
 import type { NationalSummary } from "@/types/home";
-import { formatDateLong, formatPrice, formatPriceCompact } from "@/utils/format";
+import { formatDateLong, formatPrice, formatPriceCompact, toISODate } from "@/utils/format";
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
@@ -20,6 +20,11 @@ function Metric({ label, value }: { label: string; value: string }) {
 
 /** Today's national average — the page's primary answer box. */
 export function LiveRateCard({ summary }: { summary: NationalSummary }) {
+  const todayStr = toISODate();
+  const displayDate = summary.effectiveDate && summary.effectiveDate >= todayStr
+    ? summary.effectiveDate
+    : todayStr;
+
   return (
     <Card className="overflow-hidden border-border/70 shadow-lg shadow-primary/5">
       <CardContent className="p-4 sm:p-6">
@@ -60,8 +65,8 @@ export function LiveRateCard({ summary }: { summary: NationalSummary }) {
           ) : null}
           <span className="inline-flex items-center gap-1.5">
             <Clock3 className="size-3.5 sm:size-4" aria-hidden />
-            <time dateTime={summary.lastUpdated}>
-              Updated {formatDateLong(summary.effectiveDate)}
+            <time dateTime={summary.lastUpdated || displayDate}>
+              Updated {formatDateLong(displayDate)}
             </time>
           </span>
           <span>

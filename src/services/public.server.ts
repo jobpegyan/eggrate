@@ -148,7 +148,7 @@ export async function getHomepageData(): Promise<HomepageData> {
     .range(1, 1)
     .maybeSingle();
 
-  const effectiveDate = latestCityDate || history.at(-1)?.date || toISODate();
+  const effectiveDate = (latestCityDate && latestCityDate >= todayStr) ? latestCityDate : todayStr;
 
   const cities = latestCities.sort((a, b) => {
     if (a.featured !== b.featured) return a.featured ? -1 : 1;
