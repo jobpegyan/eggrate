@@ -44,7 +44,12 @@ export function formatNumber(value: number): string {
 }
 
 function toDate(input: string | Date): Date {
-  return input instanceof Date ? input : new Date(input);
+  if (input instanceof Date) return input;
+  if (typeof input === "string" && /^\d{4}-\d{2}-\d{2}$/.test(input.trim())) {
+    const [y, m, d] = input.trim().split("-").map(Number);
+    return new Date(y, m - 1, d, 12, 0, 0);
+  }
+  return new Date(input);
 }
 
 /** "4 Aug 2026" */
