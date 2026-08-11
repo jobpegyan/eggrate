@@ -178,18 +178,48 @@ export async function getCityPageData(slug: string): Promise<CityPageData | null
     loadPopularCities(slug),
   ]);
 
-  if (rateError) throw new Error(rateError.message);
-  const rows = (rateData ?? []) as unknown as CityRateRow[];
+  let rows = (rateData ?? []) as unknown as CityRateRow[];
 
   /* ------------------------------ daily rollups ----------------------------- */
 
-  const byDate = new Map<string, CityRateRow[]>();
+  const todayStr = toISODate();
+  let byDate = new Map<string, CityRateRow[]>();
   for (const row of rows) {
     const list = byDate.get(row.effective_date);
     if (list) list.push(row);
     else byDate.set(row.effective_date, [row]);
   }
-  const dates = [...byDate.keys()].sort((a, b) => b.localeCompare(a));
+  let dates = [...byDate.keys()].sort((a, b) => b.localeCompare(a));
+
+  if (!dates[0] || dates[0] < todayStr) {
+    try {
+      const { AutomationEngine } = await import("./automation-engine.server");
+      const engine = new AutomationEngine();
+      await engine.executeFullPipeline(todayStr);
+
+      const { data: freshRateData } = await supabase
+        .from("egg_rates")
+        .select("id, egg_rate, dozen_price, tray_price, hundred_price, peti_price, wholesale_price, retail_price, effective_date, updated_at, is_verified, markets!inner(id, name, slug, market_type, supports_wholesale, supports_retail)")
+        .eq("city_id", cityRecord.id)
+        .eq("is_published", true)
+        .order("effective_date", { ascending: false })
+        .limit(4000);
+
+      if (freshRateData && freshRateData.length > 0) {
+        rows = freshRateData as unknown as CityRateRow[];
+        byDate = new Map<string, CityRateRow[]>();
+        for (const row of rows) {
+          const list = byDate.get(row.effective_date);
+          if (list) list.push(row);
+          else byDate.set(row.effective_date, [row]);
+        }
+        dates = [...byDate.keys()].sort((a, b) => b.localeCompare(a));
+      }
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
   const today = byDate.get(dates[0] ?? "") ?? [];
   const yesterday = byDate.get(dates[1] ?? "") ?? [];
 

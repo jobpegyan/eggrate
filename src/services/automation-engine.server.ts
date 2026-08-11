@@ -285,32 +285,42 @@ export class AutomationEngine {
 
       let finalCityCount = new Set((freshRates || []).map((r) => r.city_id)).size;
 
-      // If fresh rates for target date are missing, propagate active rates for targetDateStr with verified flag
+      // If fresh rates for target date are missing, propagate active rates from the latest available date
       if (finalCityCount === 0) {
-        const yesterdayStr = getYesterdayDate(targetDateStr);
-        const { data: latestBaseRates } = await supabase
+        const { data: latestDateRow } = await supabase
           .from("egg_rates")
-          .select("city_id, state_id, market_id, category_id, egg_rate, dozen_price, tray_price, hundred_price, peti_price, wholesale_price, retail_price, currency, source_id")
-          .eq("effective_date", yesterdayStr)
-          .eq("is_published", true);
+          .select("effective_date")
+          .order("effective_date", { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-        if (latestBaseRates && latestBaseRates.length > 0) {
-          const newRows = latestBaseRates.map((row) => ({
-            ...row,
-            effective_date: targetDateStr,
-            is_verified: true,
-            is_published: true,
-            published_at: startTime,
-            updated_at: startTime,
-            notes: `Auto-synchronized rate pipeline for ${targetDateStr}`,
-          }));
+        const maxAvailableDate = latestDateRow?.effective_date;
 
-          await supabase.from("egg_rates").upsert(newRows, {
-            onConflict: "market_id,category_id,effective_date",
-            ignoreDuplicates: true,
-          } as any);
+        if (maxAvailableDate && maxAvailableDate < targetDateStr) {
+          const { data: latestBaseRates } = await supabase
+            .from("egg_rates")
+            .select("city_id, state_id, market_id, category_id, egg_rate, dozen_price, tray_price, hundred_price, peti_price, wholesale_price, retail_price, currency, source_id")
+            .eq("effective_date", maxAvailableDate)
+            .eq("is_published", true);
 
-          finalCityCount = new Set(latestBaseRates.map((r) => r.city_id)).size;
+          if (latestBaseRates && latestBaseRates.length > 0) {
+            const newRows = latestBaseRates.map((row) => ({
+              ...row,
+              effective_date: targetDateStr,
+              is_verified: true,
+              is_published: true,
+              published_at: startTime,
+              updated_at: startTime,
+              notes: `Auto-synchronized rate pipeline for ${targetDateStr}`,
+            }));
+
+            await supabase.from("egg_rates").upsert(newRows, {
+              onConflict: "market_id,category_id,effective_date",
+              ignoreDuplicates: true,
+            } as any);
+
+            finalCityCount = new Set(latestBaseRates.map((r) => r.city_id)).size;
+          }
         }
       }
 
