@@ -15,7 +15,7 @@ export const autoDetectSource = createServerFn({ method: "POST" })
 export const testConnector = createServerFn({ method: "POST" })
   .validator(z.object({
     url: z.string().url("Enter a valid URL"),
-    kind: z.enum(["auto", "wordpress", "api", "json", "rss", "html", "csv", "custom"]),
+    kind: z.enum(["auto", "wordpress", "api", "json", "rss", "html", "csv", "excel", "manual", "cron", "webhook", "scrape", "custom"]),
     fieldMappings: z.array(z.object({
       sourceField: z.string(),
       targetField: z.string(),
@@ -39,7 +39,7 @@ export const runConnectorNow = createServerFn({ method: "POST" })
   .validator(z.object({
     sourceId: z.string().optional(),
     url: z.string().url("Enter a valid URL"),
-    kind: z.enum(["auto", "wordpress", "api", "json", "rss", "html", "csv", "custom"]),
+    kind: z.enum(["auto", "wordpress", "api", "json", "rss", "html", "csv", "excel", "manual", "cron", "webhook", "scrape", "custom"]),
     fieldMappings: z.array(z.object({
       sourceField: z.string(),
       targetField: z.string(),

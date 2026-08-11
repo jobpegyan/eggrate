@@ -6,7 +6,7 @@ const DEFAULT_HEADERS = {
   "Accept": "application/json, text/html, */*",
 };
 
-export type ConnectorKind = "auto" | "wordpress" | "api" | "json" | "rss" | "html" | "csv" | "custom";
+export type ConnectorKind = "auto" | "wordpress" | "api" | "json" | "rss" | "html" | "csv" | "excel" | "manual" | "cron" | "webhook" | "scrape" | "custom";
 
 export interface FieldMappingConfig {
   sourceField: string;
