@@ -315,7 +315,7 @@ export class AutomationEngine {
             }));
 
             await supabase.from("egg_rates").upsert(newRows, {
-              onConflict: "market_id,category_id,effective_date",
+              onConflict: "city_id,market_id,effective_date",
               ignoreDuplicates: true,
             } as any);
 

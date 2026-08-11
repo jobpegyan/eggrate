@@ -85,7 +85,7 @@ export const importNECCMonthHistorical = createServerFn({ method: "POST" })
     let importedCount = 0;
     if (dbRows.length > 0) {
       const { error: upsertErr } = await supabaseAdmin.from("egg_rates").upsert(dbRows, {
-        onConflict: "market_id,category_id,effective_date",
+        onConflict: "city_id,market_id,effective_date",
         ignoreDuplicates: false,
       } as any);
 
