@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { 
   Activity, 
   Settings, 
@@ -10,16 +11,25 @@ import {
   Clock, 
   RefreshCcw 
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getSourceHealth, getAutomationAuditLogs } from "@/services/automation.functions";
+import { toast } from "sonner";
+
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  getAutomationAuditLogs, 
+  getSourceHealth, 
+  triggerSyncPipeline 
+} from "@/services/automation.functions";
 
 export const Route = createFileRoute('/_authenticated/admin/')({
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
+  const queryClient = useQueryClient();
+  const [isSyncing, setIsSyncing] = useState(false);
+
   const { data: health, isLoading: loadingHealth } = useQuery({
     queryKey: ['sourceHealth'],
     queryFn: () => getSourceHealth(),
@@ -29,6 +39,21 @@ function AdminDashboard() {
     queryKey: ['automationLogs'],
     queryFn: () => getAutomationAuditLogs({ data: { limit: 5, offset: 0 } }),
   });
+
+  async function handleRunNow() {
+    setIsSyncing(true);
+    toast.info("Running egg rate update pipeline...");
+    try {
+      const result = await triggerSyncPipeline();
+      await queryClient.invalidateQueries({ queryKey: ['sourceHealth'] });
+      await queryClient.invalidateQueries({ queryKey: ['automationLogs'] });
+      toast.success(`Pipeline executed successfully! Coverage: ${result.coveragePercent}%`);
+    } catch (err: any) {
+      toast.error(`Pipeline run failed: ${err.message}`);
+    } finally {
+      setIsSyncing(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -140,13 +165,15 @@ function AdminDashboard() {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
-        <Button variant="outline" className="gap-2">
-          <Settings className="h-4 w-4" />
-          Automation Settings
+        <Button variant="outline" className="gap-2" asChild>
+          <Link to="/admin/settings">
+            <Settings className="h-4 w-4" />
+            Automation Settings
+          </Link>
         </Button>
-        <Button className="gap-2">
-          <RefreshCcw className="h-4 w-4" />
-          Run Now
+        <Button className="gap-2" disabled={isSyncing} onClick={handleRunNow}>
+          <RefreshCcw className={`h-4 w-4 ${isSyncing ? "animate-spin" : ""}`} />
+          {isSyncing ? "Running..." : "Run Now"}
         </Button>
       </div>
     </div>
