@@ -204,7 +204,10 @@ function SourcesPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="source-url">Endpoint URL</Label>
-              <Input id="source-url" placeholder="https://…" {...form.register("url")} />
+              <Input id="source-url" placeholder="https://www.egg-rate.today/api/cron/update-rates" {...form.register("url")} />
+              <p className="text-[11px] text-muted-foreground">
+                Enter your automated endpoint URL, e.g. <code className="bg-muted px-1 rounded font-mono">https://www.egg-rate.today/api/cron/update-rates</code>
+              </p>
               <FieldError message={form.formState.errors.url?.message} />
             </div>
             <div className="space-y-2">
