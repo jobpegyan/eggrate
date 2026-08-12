@@ -180,6 +180,54 @@ export async function getCityPageData(slug: string): Promise<CityPageData | null
 
   let rows = (rateData ?? []) as unknown as CityRateRow[];
 
+  // Fallback: If sub-city has no direct rows, pull rate data from parent city or state hub
+  if (rows.length === 0) {
+    try {
+      const { getParentCitySlug } = await import("@/utils/city-clusters");
+      const parentSlug = getParentCitySlug(cityRecord.slug);
+      let targetParentCityId: string | null = null;
+
+      if (parentSlug) {
+        const { data: parentCity } = await supabase
+          .from("cities")
+          .select("id")
+          .eq("slug", parentSlug)
+          .maybeSingle();
+        if (parentCity) targetParentCityId = parentCity.id;
+      }
+
+      if (!targetParentCityId) {
+        const { data: featCity } = await supabase
+          .from("cities")
+          .select("id")
+          .eq("state_id", cityRecord.state_id)
+          .eq("is_featured", true)
+          .limit(1)
+          .maybeSingle();
+        if (featCity) targetParentCityId = featCity.id;
+      }
+
+      if (targetParentCityId) {
+        const { data: fallbackRates } = await supabase
+          .from("egg_rates")
+          .select(
+            "id,egg_rate,dozen_price,tray_price,hundred_price,peti_price,wholesale_price,retail_price,effective_date,updated_at,is_verified,markets(id,name,slug,market_type,supports_wholesale,supports_retail)",
+          )
+          .eq("is_published", true)
+          .eq("city_id", targetParentCityId)
+          .gte("effective_date", yearStart)
+          .order("effective_date", { ascending: false })
+          .limit(5000);
+
+        if (fallbackRates && fallbackRates.length > 0) {
+          rows = fallbackRates as unknown as CityRateRow[];
+        }
+      }
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
   /* ------------------------------ daily rollups ----------------------------- */
 
   const todayStr = toISODate();

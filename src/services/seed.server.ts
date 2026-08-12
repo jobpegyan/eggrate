@@ -84,6 +84,14 @@ export async function seedAllIndiaData(): Promise<SeedResult> {
   const stateByCode = new Map(
     (allStatesInDB ?? []).map((s) => [s.code, { id: s.id, slug: s.slug }]),
   );
+  const stateBySlug = new Map(
+    (allStatesInDB ?? []).map((s) => [s.slug, { id: s.id, code: s.code }]),
+  );
+
+  // Build a secondary lookup: seed stateCode → state slug from ALL_STATES
+  const seedCodeToSlug = new Map(
+    ALL_STATES.map((s) => [s.code, s.slug]),
+  );
 
   // ─── Step 2: Seed cities ───────────────────────────────────────────
   const { data: existingCities } = await supabaseAdmin
@@ -103,7 +111,10 @@ export async function seedAllIndiaData(): Promise<SeedResult> {
   if (newCities.length > 0) {
     const cityPayload = newCities
       .map((c) => {
-        const stateInfo = stateByCode.get(c.stateCode);
+        const targetSlug = seedCodeToSlug.get(c.stateCode);
+        const stateInfo =
+          stateByCode.get(c.stateCode) ??
+          (targetSlug ? stateBySlug.get(targetSlug) : undefined);
         if (!stateInfo) {
           result.errors.push(
             `City "${c.name}" skipped — state code "${c.stateCode}" not found in DB`,
@@ -182,7 +193,16 @@ export async function seedAllIndiaData(): Promise<SeedResult> {
   }
   result.marketsSkipped = citiesWithMarkets.size;
 
-  // ─── Step 4: Audit log ─────────────────────────────────────────────
+  // ─── Step 4: Sync sub-city rates from main cities ───────────────────
+  try {
+    const { syncSubCityRatesFromMainCities } = await import("./subcity-sync.server");
+    const subSync = await syncSubCityRatesFromMainCities();
+    console.log(`[Seed] Sub-city rate sync complete: synced ${subSync.ratesSynced} rows across ${subSync.subCitiesProcessed} sub-cities`);
+  } catch (subSyncErr: any) {
+    result.errors.push(`Sub-city sync warning: ${subSyncErr?.message}`);
+  }
+
+  // ─── Step 5: Audit log ─────────────────────────────────────────────
   try {
     await supabaseAdmin.from("system_logs").insert({
       level: "info",

@@ -371,6 +371,13 @@ export class NECCConnectorEngine {
       if (!upsertErr) {
         importedCount = dbRows.length;
         console.log(`[NECC] Upsert success: ${importedCount} rows`);
+        try {
+          const { syncSubCityRatesFromMainCities } = await import("./subcity-sync.server");
+          const syncRes = await syncSubCityRatesFromMainCities(todayStr);
+          console.log(`[NECC] Sub-city sync completed: synced ${syncRes.ratesSynced} rows across ${syncRes.subCitiesProcessed} sub-cities`);
+        } catch (subErr: any) {
+          console.warn("[NECC] Sub-city sync warning:", subErr?.message);
+        }
       } else {
         upsertErrorMsg = upsertErr.message;
         console.error("[NECC] Upsert error:", upsertErr.message, upsertErr);

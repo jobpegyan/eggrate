@@ -31,6 +31,8 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TrendsRouteImport } from './routes/trends'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as ApiCronRouteImport } from './routes/api.cron'
+import { Route as ApiSeedIndiaRouteImport } from './routes/api.seed-india'
+import { Route as ApiSyncSubcitiesRouteImport } from './routes/api.sync-subcities'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
@@ -173,6 +175,16 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
 const ApiCronRoute = ApiCronRouteImport.update({
   id: '/api/cron',
   path: '/api/cron',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSeedIndiaRoute = ApiSeedIndiaRouteImport.update({
+  id: '/api/seed-india',
+  path: '/api/seed-india',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSyncSubcitiesRoute = ApiSyncSubcitiesRouteImport.update({
+  id: '/api/sync-subcities',
+  path: '/api/sync-subcities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
@@ -383,6 +395,8 @@ export interface FileRoutesByFullPath {
   '/trends': typeof TrendsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/api/cron': typeof ApiCronRouteWithChildren
+  '/api/seed-india': typeof ApiSeedIndiaRoute
+  '/api/sync-subcities': typeof ApiSyncSubcitiesRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -439,6 +453,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/trends': typeof TrendsRoute
   '/api/cron': typeof ApiCronRouteWithChildren
+  '/api/seed-india': typeof ApiSeedIndiaRoute
+  '/api/sync-subcities': typeof ApiSyncSubcitiesRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -498,6 +514,8 @@ export interface FileRoutesById {
   '/trends': typeof TrendsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/api/cron': typeof ApiCronRouteWithChildren
+  '/api/seed-india': typeof ApiSeedIndiaRoute
+  '/api/sync-subcities': typeof ApiSyncSubcitiesRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/compare/$slug': typeof CompareSlugRoute
@@ -557,6 +575,8 @@ export interface FileRouteTypes {
     | '/trends'
     | '/admin'
     | '/api/cron'
+    | '/api/seed-india'
+    | '/api/sync-subcities'
     | '/blog/$slug'
     | '/city/$slug'
     | '/compare/$slug'
@@ -613,6 +633,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trends'
     | '/api/cron'
+    | '/api/seed-india'
+    | '/api/sync-subcities'
     | '/blog/$slug'
     | '/city/$slug'
     | '/compare/$slug'
@@ -671,6 +693,8 @@ export interface FileRouteTypes {
     | '/trends'
     | '/_authenticated/admin'
     | '/api/cron'
+    | '/api/seed-india'
+    | '/api/sync-subcities'
     | '/blog/$slug'
     | '/city/$slug'
     | '/compare/$slug'
@@ -729,6 +753,8 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrendsRoute: typeof TrendsRoute
   ApiCronRoute: typeof ApiCronRouteWithChildren
+  ApiSeedIndiaRoute: typeof ApiSeedIndiaRoute
+  ApiSyncSubcitiesRoute: typeof ApiSyncSubcitiesRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
   CompareSlugRoute: typeof CompareSlugRoute
@@ -891,6 +917,20 @@ declare module '@tanstack/react-router' {
       path: '/api/cron'
       fullPath: '/api/cron'
       preLoaderRoute: typeof ApiCronRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/seed-india': {
+      id: '/api/seed-india'
+      path: '/api/seed-india'
+      fullPath: '/api/seed-india'
+      preLoaderRoute: typeof ApiSeedIndiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync-subcities': {
+      id: '/api/sync-subcities'
+      path: '/api/sync-subcities'
+      fullPath: '/api/sync-subcities'
+      preLoaderRoute: typeof ApiSyncSubcitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/': {
@@ -1264,6 +1304,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrendsRoute: TrendsRoute,
   ApiCronRoute: ApiCronRouteWithChildren,
+  ApiSeedIndiaRoute: ApiSeedIndiaRoute,
+  ApiSyncSubcitiesRoute: ApiSyncSubcitiesRoute,
   BlogSlugRoute: BlogSlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,
   CompareSlugRoute: CompareSlugRoute,

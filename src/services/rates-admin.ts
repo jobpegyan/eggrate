@@ -390,6 +390,13 @@ export async function saveRate(values: EggRateValues, id?: string, actorId?: str
     ? await supabase.from("egg_rates").update(payload).eq("id", id)
     : await supabase.from("egg_rates").insert({ ...payload, created_by: actorId ?? null });
   if (error) throw new Error(error.message);
+
+  try {
+    const { syncSubCityRatesFromMainCities } = await import("./subcity-sync.server");
+    await syncSubCityRatesFromMainCities(values.effectiveDate);
+  } catch {
+    // Non-blocking sync trigger
+  }
 }
 
 export async function deleteRows(table: "states" | "cities" | "markets" | "egg_rates" | "data_sources", ids: string[]) {

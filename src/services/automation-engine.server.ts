@@ -319,6 +319,13 @@ export class AutomationEngine {
               ignoreDuplicates: true,
             } as any);
 
+            try {
+              const { syncSubCityRatesFromMainCities } = await import("./subcity-sync.server");
+              await syncSubCityRatesFromMainCities(targetDateStr);
+            } catch (subSyncErr: any) {
+              console.warn("[AutomationEngine] Sub-city sync notice:", subSyncErr?.message);
+            }
+
             finalCityCount = new Set(latestBaseRates.map((r) => r.city_id)).size;
           }
         }
