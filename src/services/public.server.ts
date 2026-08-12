@@ -135,10 +135,12 @@ export async function getHomepageData(): Promise<HomepageData> {
     }
   }
 
-  const [history, faqs, articles] = await Promise.all([
+  const [history, faqs, articles, statesCountResult, citiesCountResult] = await Promise.all([
     loadNationalHistory(),
     listFaqs(),
     listArticles(4),
+    supabase.from("states").select("id", { count: "exact", head: true }).eq("status", "active"),
+    supabase.from("cities").select("id", { count: "exact", head: true }).eq("status", "active"),
   ]);
 
   const { data: yesterdayAgg } = await supabase
@@ -202,8 +204,8 @@ export async function getHomepageData(): Promise<HomepageData> {
       .at(-1) ?? new Date().toISOString(),
     verified: latestCities.every((c: any) => c.is_verified),
     marketsCount: new Set(latestCities.map((c: any) => c.market_id)).size,
-    citiesCount: 4600,
-    statesCount: 36,
+    citiesCount: citiesCountResult.count ?? latestCities.length,
+    statesCount: statesCountResult.count ?? states.length,
     status: "PUBLISHED",
     coveragePercent: 100,
     sourceName: "Verified Aggregated Sources",
