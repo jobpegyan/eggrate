@@ -237,11 +237,14 @@ export async function getStatePageData(slug: string): Promise<StatePageData | nu
 
       const { data: freshRateData } = await supabase
         .from("egg_rates")
-        .select("id, egg_rate, dozen_price, tray_price, hundred_price, peti_price, wholesale_price, retail_price, effective_date, updated_at, is_verified, markets!inner(id, name, slug, market_type, supports_wholesale, supports_retail, cities!inner(name, slug, state_id, states!inner(name, slug)))")
+        .select(
+          "id,egg_rate,dozen_price,tray_price,hundred_price,peti_price,wholesale_price,retail_price,effective_date,updated_at,is_verified,cities(name,slug,is_featured),markets(name,slug)",
+        )
         .eq("is_published", true)
-        .eq("status", "active")
-        .eq("cities.states.slug", slug)
-        .order("effective_date", { ascending: false });
+        .eq("state_id", state.id)
+        .gte("effective_date", isoDaysAgo(YEAR_DAYS))
+        .order("effective_date", { ascending: false })
+        .limit(5000);
 
       if (freshRateData && freshRateData.length > 0) {
         rows = freshRateData as unknown as StateRateRow[];

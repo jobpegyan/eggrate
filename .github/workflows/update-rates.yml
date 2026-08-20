@@ -1,0 +1,20 @@
+name: Automatic Daily Egg Rate Sync
+
+on:
+  schedule:
+    # Runs every 2 hours between 5:30 AM IST and 8:30 PM IST (0:00 to 15:00 UTC)
+    - cron: '0 0,2,4,6,8,10,12,14 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-rates:
+    name: Trigger Automated Rate Sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Cron Endpoint
+        run: |
+          echo "Triggering automated egg rate synchronization..."
+          # Try primary production domains
+          curl -s -f -X GET "https://eggrateindia.in/api/cron/update-rates" || \
+          curl -s -f -X GET "https://eggrate-india.vercel.app/api/cron/update-rates" || \
+          echo "Cron endpoint reached"

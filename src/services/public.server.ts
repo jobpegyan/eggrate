@@ -121,15 +121,16 @@ export async function getHomepageData(): Promise<HomepageData> {
   const todayStr = toISODate();
   if (!latestCityDate || latestCityDate < todayStr) {
     try {
-      const { error: rpcErr } = await supabase.rpc("auto_update_egg_rates");
-      if (!rpcErr) {
-        latestCities = await loadLatestRates();
-        latestCityDate = (latestCities as any[])
-          .map((c) => c.effective_date)
-          .filter(Boolean)
-          .sort()
-          .at(-1);
-      }
+      const { AutomationEngine } = await import("./automation-engine.server");
+      const engine = new AutomationEngine();
+      await engine.executeFullPipeline(todayStr);
+
+      latestCities = await loadLatestRates();
+      latestCityDate = (latestCities as any[])
+        .map((c) => c.effective_date)
+        .filter(Boolean)
+        .sort()
+        .at(-1);
     } catch {
       // Non-blocking auto-healing
     }

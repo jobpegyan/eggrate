@@ -270,13 +270,27 @@ export class AutomationEngine {
         };
       }
 
-      // Stage 2: Trigger RPC auto-update function if available
-      const { error: rpcErr } = await supabase.rpc("auto_update_egg_rates");
-      if (rpcErr) {
-        console.warn("auto_update_egg_rates RPC notice:", rpcErr.message);
+      // Stage 2: Attempt live fetch from official NECC portal
+      try {
+        const { NECCConnectorEngine } = await import("./necc-connector.server");
+        const neccEngine = new NECCConnectorEngine();
+        const neccRes = await neccEngine.fetchCurrentNECCRates();
+        console.log("[Pipeline] Live NECC fetch result:", neccRes.note || neccRes);
+      } catch (neccErr: any) {
+        console.warn("[Pipeline] Live NECC fetch notice:", neccErr.message);
       }
 
-      // Stage 3: Fetch verified rates for target date or copy latest active set cleanly with targetDateStr timestamp
+      // Stage 3: Trigger RPC auto-update function if available
+      try {
+        const { error: rpcErr } = await supabase.rpc("auto_update_egg_rates");
+        if (rpcErr) {
+          console.warn("auto_update_egg_rates RPC notice:", rpcErr.message);
+        }
+      } catch {
+        // Non-blocking RPC notice
+      }
+
+      // Stage 4: Fetch verified rates for target date or copy latest active set cleanly with targetDateStr timestamp
       const { data: freshRates } = await supabase
         .from("egg_rates")
         .select("id, city_id, state_id, market_id, category_id, egg_rate, dozen_price, tray_price, hundred_price, peti_price, wholesale_price, retail_price, currency, is_verified, is_published")
